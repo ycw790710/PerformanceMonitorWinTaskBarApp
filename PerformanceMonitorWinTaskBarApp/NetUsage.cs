@@ -59,18 +59,14 @@ public static class NetUsage
                 networkInterface.NetworkInterfaceType != NetworkInterfaceType.Tunnel)
             {
                 foreach (var instancename in instancenames)
-                {
-                    var a = ReplaceSymbols(instancename);
-                    var b = ReplaceSymbols(networkInterface.Description);
-                    if (a.StartsWith(b))
+                    if (ReplaceSymbols(instancename) == ReplaceSymbols(networkInterface.Description))
                         return instancename;
-                }
             }
         }
         return null;
     }
     private static string ReplaceSymbols(string str)
     {
-        return new string(str.ToArray().Select(n => char.IsLetterOrDigit(n) ? n : ' ').ToArray());
+        return new string(str.ToArray().Where(n => char.IsLetterOrDigit(n)).ToArray());
     }
 }

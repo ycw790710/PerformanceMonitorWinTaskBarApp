@@ -236,6 +236,7 @@
             MaximizeBox = false;
             MinimizeBox = false;
             Name = "PerformanceMonitorWinTaskBar";
+            Opacity = 0D;
             ShowIcon = false;
             ShowInTaskbar = false;
             monitorTableLayoutPanel.ResumeLayout(false);

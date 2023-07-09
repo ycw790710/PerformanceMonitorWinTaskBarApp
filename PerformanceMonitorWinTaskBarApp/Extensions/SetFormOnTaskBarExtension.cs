@@ -31,6 +31,8 @@ public static class SetFormOnTaskBarExtension
 
     public static void SetOnTaskBar(this Form form)
     {
+        form.SuspendLayout();
+
         form.FormBorderStyle = FormBorderStyle.None;
         form.MaximizeBox = false;
         form.MinimizeBox = false;
@@ -45,5 +47,7 @@ public static class SetFormOnTaskBarExtension
 
         int right = Screen.PrimaryScreen.Bounds.Width - GetAppNotifyWidth();
         form.Left = right - form.Width;
+
+        form.ResumeLayout();
     }
 }

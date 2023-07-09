@@ -13,15 +13,15 @@ namespace PerformanceMonitorWinTaskBarApp
         public PerformanceMonitorWinTaskBar()
         {
             InitializeComponent();
+            this.SetOnTaskBar();
 
             _dataTimer = GetDataTimer();
             _showTimer = GetShowTimer();
             ContextMenuStrip = GetContextMenuStrip();
             _networkMenuOptions = new(ContextMenuStrip);
 
-            this.SetOnTaskBar();
-
-            InitializeUsages.Initialize();
+            _dataTimer.Start();
+            _showTimer.Start();
         }
 
         private System.Windows.Forms.Timer GetDataTimer()
@@ -29,11 +29,12 @@ namespace PerformanceMonitorWinTaskBarApp
             var dataTimer = new System.Windows.Forms.Timer();
             dataTimer.Interval = 1000;
             dataTimer.Tick += DataTimer_Tick;
-            dataTimer.Start();
             return dataTimer;
         }
         private void DataTimer_Tick(object? sender, EventArgs e)
         {
+            InitializeUsages.Initialize();
+
             _networkMenuOptions.UpdateNetworkOptions();
 
             UpdateCpuInfo();
@@ -46,11 +47,11 @@ namespace PerformanceMonitorWinTaskBarApp
             var showTimer = new System.Windows.Forms.Timer();
             showTimer.Interval = 16;
             showTimer.Tick += ShowTimer_Tick;
-            showTimer.Start();
             return showTimer;
         }
         private void ShowTimer_Tick(object? sender, EventArgs e)
         {
+            this.Opacity = 1;
             this.SetOnTaskBar();
             Show();
         }

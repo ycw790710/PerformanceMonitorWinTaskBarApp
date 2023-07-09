@@ -29,8 +29,9 @@ public static class SetFormOnTaskBarExtension
         return rect.Right - rect.Left;
     }
 
-    public static void SetOnTaskBar(this Form form)
+    public static bool SetOnTaskBar(this Form form)
     {
+        var success = true;
         form.SuspendLayout();
 
         form.FormBorderStyle = FormBorderStyle.None;
@@ -42,6 +43,10 @@ public static class SetFormOnTaskBarExtension
         form.AutoSize = false;
 
         int taskbarHeight = Screen.PrimaryScreen.Bounds.Height - Screen.PrimaryScreen.WorkingArea.Height;
+        if (taskbarHeight < 10)
+        {
+            success = false;
+        }
         form.Height = taskbarHeight;
         form.Top = Screen.PrimaryScreen.Bounds.Height - taskbarHeight;
 
@@ -49,5 +54,6 @@ public static class SetFormOnTaskBarExtension
         form.Left = right - form.Width;
 
         form.ResumeLayout();
+        return success;
     }
 }

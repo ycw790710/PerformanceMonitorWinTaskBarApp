@@ -6,9 +6,14 @@ namespace PerformanceMonitorWinTaskBarApp
 {
     public partial class PerformanceMonitorWinTaskBar : Form
     {
+        const int ShowTimerInterval = 16;
+        const int DataTimerInterval = 1000;
+
         readonly System.Windows.Forms.Timer _dataTimer;
         readonly System.Windows.Forms.Timer _showTimer;
+        readonly System.Windows.Forms.Timer _usageTimer;
         readonly NetworkMenuOptions _networkMenuOptions;
+        readonly UsageHandler _usageHandler;
 
         public PerformanceMonitorWinTaskBar()
         {
@@ -16,41 +21,56 @@ namespace PerformanceMonitorWinTaskBarApp
 
             _dataTimer = GetDataTimer();
             _showTimer = GetShowTimer();
+            _usageTimer = GetUsageTimer();
             ContextMenuStrip = GetContextMenuStrip();
             _networkMenuOptions = new(ContextMenuStrip);
+            _usageHandler = new();
 
+            StartTimers();
+        }
+
+        private void StartTimers()
+        {
             _dataTimer.Start();
             _showTimer.Start();
+            _usageTimer.Start();
+        }
+        private void EndTimers()
+        {
+            _showTimer.Stop();
+            _dataTimer.Stop();
+            _usageTimer.Stop();
         }
 
         private System.Windows.Forms.Timer GetDataTimer()
         {
             var dataTimer = new System.Windows.Forms.Timer();
-            dataTimer.Interval = 1000;
+            dataTimer.Interval = DataTimerInterval;
             dataTimer.Tick += DataTimer_Tick;
             return dataTimer;
         }
         private void DataTimer_Tick(object? sender, EventArgs e)
         {
-            InitializeUsages.Initialize();
-
-            _networkMenuOptions.UpdateNetworkOptions();
-
-            UpdateCpuInfo();
-            UpdateMemoryInfo();
-            UpdateNetworkInfo();
+            _usageHandler.UpdateData();
         }
 
         private System.Windows.Forms.Timer GetShowTimer()
         {
             var showTimer = new System.Windows.Forms.Timer();
-            showTimer.Interval = 16;
+            showTimer.Interval = ShowTimerInterval;
             showTimer.Tick += ShowTimer_Tick;
             return showTimer;
         }
         private void ShowTimer_Tick(object? sender, EventArgs e)
         {
-            this.SetOnTaskBar();
+            var success = this.SetOnTaskBar();
+            if (!success)
+            {
+                EndTimers();
+                MessageBox.Show("Taskbar高度不足,結束程式", "效能監視器");
+                this.Close();
+                return;
+            }
 
             var top1 = this.Top;
             var left1 = this.Left;
@@ -59,6 +79,24 @@ namespace PerformanceMonitorWinTaskBarApp
             var left2 = this.Left;
             if (top1 == top2 && left1 == left2)
                 this.Opacity = 1;
+
+        }
+
+        private System.Windows.Forms.Timer GetUsageTimer()
+        {
+            var usageTimer = new System.Windows.Forms.Timer();
+            usageTimer.Interval = DataTimerInterval;
+            usageTimer.Tick += UsageTimer_Tick;
+            return usageTimer;
+        }
+
+        private void UsageTimer_Tick(object? sender, EventArgs e)
+        {
+            _networkMenuOptions.UpdateNetworkOptions();
+
+            UpdateCpuInfo();
+            UpdateMemoryInfo();
+            UpdateNetworkInfo();
         }
 
         private ContextMenuStrip GetContextMenuStrip()
@@ -76,37 +114,34 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void UpdateCpuInfo()
         {
-            var cpuInfo = CpuUsage.Get();
-            labCpu.Text = cpuInfo.val;
-            labCpuUnit.Text = cpuInfo.unit;
+            labCpu.Text = _usageHandler.CpuInfo.val;
+            labCpuUnit.Text = _usageHandler.CpuInfo.unit;
 
             labCpu.FitFontSize();
         }
         private void UpdateMemoryInfo()
         {
-            var ramInfo = MemoryUsage.Get();
-            labRam.Text = ramInfo.val;
-            labRamUnit.Text = ramInfo.unit;
+            labRam.Text = _usageHandler.RamInfo.val;
+            labRamUnit.Text = _usageHandler.RamInfo.unit;
 
             labRam.FitFontSize();
         }
         private void UpdateNetworkInfo()
         {
-            var networkUploadInfo = NetworkUsage.GetUpload();
-            labNetUploadName.Text = networkUploadInfo.sign;
-            labNetUpload.Text = networkUploadInfo.value;
-            labNetUploadUnit.Text = networkUploadInfo.unit;
+            labNetUploadName.Text = _usageHandler.NetworkUploadInfo.sign;
+            labNetUpload.Text = _usageHandler.NetworkUploadInfo.value;
+            labNetUploadUnit.Text = _usageHandler.NetworkUploadInfo.unit;
 
             labNetUpload.FitFontSize();
             labNetUploadUnit.FitFontSize();
 
-            var netDownloadInfo = NetworkUsage.GetDownload();
-            labNetDownloadName.Text = netDownloadInfo.sign;
-            labNetDownload.Text = netDownloadInfo.value;
-            labNetDownloadUnit.Text = netDownloadInfo.unit;
+            labNetDownloadName.Text = _usageHandler.NetworkDownloadInfo.sign;
+            labNetDownload.Text = _usageHandler.NetworkDownloadInfo.value;
+            labNetDownloadUnit.Text = _usageHandler.NetworkDownloadInfo.unit;
 
             labNetDownload.FitFontSize();
             labNetDownloadUnit.FitFontSize();
         }
+
     }
 }

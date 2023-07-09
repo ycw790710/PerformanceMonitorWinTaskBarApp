@@ -8,9 +8,9 @@ public static class FitFontSizeExtension
         var height = label.Height;
         var width = label.Width;
 
-        int fontSize = 1;
+        int fontSize = 2;
         int increment = 1;
-        while (true)
+        while (true && !string.IsNullOrEmpty(text))
         {
             var testFont = new Font(font.FontFamily, fontSize);
             var textSize = TextRenderer.MeasureText(text, testFont);

@@ -2,7 +2,7 @@
 public static class InitializeUsages
 {
     static bool initialized = false;
-    public static void Initialize()
+    public static void TryInitialize()
     {
         if (!initialized)
         {

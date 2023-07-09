@@ -4,6 +4,9 @@ using System.Net.NetworkInformation;
 namespace PerformanceMonitorWinTaskBarApp.Usages;
 public static class NetworkUsage
 {
+    public const string UploadSign = "▲";
+    public const string DownloadSign = "▼";
+
     public static string InstanceName { get; private set; } = "";
 
     private static PerformanceCounter downloadCounter = null!;
@@ -21,7 +24,7 @@ public static class NetworkUsage
 
         try
         {
-            return GetInfo("▼", downloadCounter.NextValue());
+            return GetInfo(DownloadSign, downloadCounter.NextValue());
         }
         catch
         {
@@ -33,7 +36,7 @@ public static class NetworkUsage
     {
         try
         {
-            return GetInfo("▲", uploadCounter.NextValue());
+            return GetInfo(UploadSign, uploadCounter.NextValue());
         }
         catch
         {

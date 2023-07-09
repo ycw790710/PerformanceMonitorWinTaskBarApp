@@ -6,7 +6,7 @@ namespace PerformanceMonitorWinTaskBarApp
 {
     public partial class PerformanceMonitorWinTaskBar : Form
     {
-        const int ShowTimerInterval = 16;
+        const int ShowTimerInterval = 500;
         const int DataTimerInterval = 1000;
 
         readonly System.Windows.Forms.Timer _dataTimer;
@@ -77,7 +77,7 @@ namespace PerformanceMonitorWinTaskBarApp
             Show();
             var top2 = this.Top;
             var left2 = this.Left;
-            if (top1 == top2 && left1 == left2)
+            if (this.Opacity != 1 && top1 == top2 && left1 == left2)
                 this.Opacity = 1;
 
         }

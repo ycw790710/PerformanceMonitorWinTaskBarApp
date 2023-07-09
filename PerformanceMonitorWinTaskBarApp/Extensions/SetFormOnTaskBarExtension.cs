@@ -1,8 +1,8 @@
 ﻿
 using System.Runtime.InteropServices;
 
-namespace PerformanceMonitorWinTaskBarApp;
-public static class SetFormOnTaskBar
+namespace PerformanceMonitorWinTaskBarApp.Extensions;
+public static class SetFormOnTaskBarExtension
 {
     [StructLayout(LayoutKind.Sequential)]
     private struct RECT
@@ -29,7 +29,7 @@ public static class SetFormOnTaskBar
         return rect.Right - rect.Left;
     }
 
-    public static void SetForm(Form form)
+    public static void SetOnTaskBar(this Form form)
     {
         form.FormBorderStyle = FormBorderStyle.None;
         form.MaximizeBox = false;

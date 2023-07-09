@@ -13,7 +13,6 @@ namespace PerformanceMonitorWinTaskBarApp
         public PerformanceMonitorWinTaskBar()
         {
             InitializeComponent();
-            this.SetOnTaskBar();
 
             _dataTimer = GetDataTimer();
             _showTimer = GetShowTimer();
@@ -51,9 +50,15 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void ShowTimer_Tick(object? sender, EventArgs e)
         {
-            this.Opacity = 1;
             this.SetOnTaskBar();
+
+            var top1 = this.Top;
+            var left1 = this.Left;
             Show();
+            var top2 = this.Top;
+            var left2 = this.Left;
+            if (top1 == top2 && left1 == left2)
+                this.Opacity = 1;
         }
 
         private ContextMenuStrip GetContextMenuStrip()

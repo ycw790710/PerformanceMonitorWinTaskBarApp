@@ -6,12 +6,14 @@ class NetworkMenuOptions : IDisposable
     readonly List<ToolStripMenuItem> _networkOptions;
     private readonly ContextMenuStrip _menuStrip;
     string _selectedNetworkOption;
+    readonly HashSet<string> _cachedOptionInstanceNames;
 
     public NetworkMenuOptions(ContextMenuStrip menuStrip)
     {
         _networkOptions = new();
         _selectedNetworkOption = "";
         _menuStrip = menuStrip;
+        _cachedOptionInstanceNames = new();
     }
 
     public void Dispose()
@@ -21,6 +23,9 @@ class NetworkMenuOptions : IDisposable
 
     public void UpdateNetworkOptions()
     {
+        if (!IsOptionInstanceNamesChanged())
+            return;
+
         _menuStrip.SuspendLayout();
         RemoveOptions();
         AddOptions();
@@ -44,6 +49,15 @@ class NetworkMenuOptions : IDisposable
         }
     }
 
+    private bool IsOptionInstanceNamesChanged()
+    {
+        var instanceNames = NetworkUsage.GetInstanceOptions().Select(n => n.instanceName);
+        var isSupersetOf = _cachedOptionInstanceNames.IsSupersetOf(instanceNames);
+        if (isSupersetOf && _cachedOptionInstanceNames.Count == instanceNames.Count())
+            return false;
+        return true;
+    }
+
     private void AddOptions()
     {
         var instanceOptions = NetworkUsage.GetInstanceOptions();
@@ -55,6 +69,7 @@ class NetworkMenuOptions : IDisposable
             _networkOptions.Add(networkOption);
             _menuStrip.Items.Add(networkOption);
         }
+        _cachedOptionInstanceNames.UnionWith(instanceOptions.Select(n => n.instanceName));
     }
 
     private void RemoveOptions()
@@ -65,6 +80,7 @@ class NetworkMenuOptions : IDisposable
             networkOption.Dispose();
         }
         _networkOptions.Clear();
+        _cachedOptionInstanceNames.Clear();
     }
 
     private void NetworkOption_Click(object? sender, EventArgs e)

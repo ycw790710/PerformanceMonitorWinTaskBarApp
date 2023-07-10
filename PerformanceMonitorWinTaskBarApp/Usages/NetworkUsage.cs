@@ -72,12 +72,12 @@ public static class NetworkUsage
             category.GetInstanceNames().Select(n => (n, KeepLetterOrDigits(n))).ToArray();
 
         List<(string instanceName, string description)> availableInstanceNames = new();
-        var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces();
+        var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces()
+            .Where(n => IsAvailableNetworkInterface(n));
         foreach (var networkInterface in networkInterfaces)
-            if (IsAvailableNetworkInterface(networkInterface))
-                foreach (var instancename in instanceNames)
-                    if (instancename.comparingName == KeepLetterOrDigits(networkInterface.Description))
-                        availableInstanceNames.Add((instancename.instanceName, networkInterface.Description));
+            foreach (var instancename in instanceNames)
+                if (instancename.comparingName == KeepLetterOrDigits(networkInterface.Description))
+                    availableInstanceNames.Add((instancename.instanceName, networkInterface.Description));
 
         return availableInstanceNames.ToList();
     }

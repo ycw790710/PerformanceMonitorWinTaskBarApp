@@ -114,34 +114,50 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void UpdateCpuInfo()
         {
-            labCpu.Text = _usageHandler.CpuInfo.val;
-            labCpuUnit.Text = _usageHandler.CpuInfo.unit;
-
-            labCpu.FitFontSize();
+            FitFontSizeInControl(() =>
+            {
+                labCpu.Text = _usageHandler.CpuInfo.val;
+                labCpuUnit.Text = _usageHandler.CpuInfo.unit;
+            }, labCpu);
         }
         private void UpdateMemoryInfo()
         {
-            labRam.Text = _usageHandler.RamInfo.val;
-            labRamUnit.Text = _usageHandler.RamInfo.unit;
-
-            labRam.FitFontSize();
+            FitFontSizeInControl(() =>
+            {
+                labRam.Text = _usageHandler.RamInfo.val;
+                labRamUnit.Text = _usageHandler.RamInfo.unit;
+            }, labRam);
         }
         private void UpdateNetworkInfo()
         {
-            labNetUploadName.Text = _usageHandler.NetworkUploadInfo.sign;
-            labNetUpload.Text = _usageHandler.NetworkUploadInfo.value;
-            labNetUploadUnit.Text = _usageHandler.NetworkUploadInfo.unit;
+            FitFontSizeInControl(() =>
+            {
+                labNetUploadName.Text = _usageHandler.NetworkUploadInfo.sign;
+                labNetUpload.Text = _usageHandler.NetworkUploadInfo.value;
+                labNetUploadUnit.Text = _usageHandler.NetworkUploadInfo.unit;
 
-            labNetUpload.FitFontSize();
-            labNetUploadUnit.FitFontSize();
-
-            labNetDownloadName.Text = _usageHandler.NetworkDownloadInfo.sign;
-            labNetDownload.Text = _usageHandler.NetworkDownloadInfo.value;
-            labNetDownloadUnit.Text = _usageHandler.NetworkDownloadInfo.unit;
-
-            labNetDownload.FitFontSize();
-            labNetDownloadUnit.FitFontSize();
+                labNetDownloadName.Text = _usageHandler.NetworkDownloadInfo.sign;
+                labNetDownload.Text = _usageHandler.NetworkDownloadInfo.value;
+                labNetDownloadUnit.Text = _usageHandler.NetworkDownloadInfo.unit;
+            }, labNetUpload, labNetUploadUnit, labNetDownload, labNetDownloadUnit);
         }
 
+        private void FitFontSizeInControl(Action action, params Label[]? labels)
+        {
+            if (labels != null)
+                foreach (var label in labels)
+                    label.SuspendLayout();
+
+            action?.Invoke();
+
+            if (labels != null)
+            {
+                foreach (var label in labels)
+                    label.FitFontSize();
+
+                foreach (var label in labels)
+                    label.ResumeLayout();
+            }
+        }
     }
 }

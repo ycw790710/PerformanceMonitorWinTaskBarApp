@@ -9,22 +9,19 @@ public static class NetworkUsage
 
     public static string InstanceName { get; private set; } = "";
 
-    private static PerformanceCounter downloadCounter = null!;
-    private static PerformanceCounter uploadCounter = null!;
+    private static PerformanceCounter? downloadCounter;
+    private static PerformanceCounter? uploadCounter;
 
     public static void Initialize()
     {
-        InstanceName = GetInstanceOptions().First().instanceName;
-        downloadCounter = new("Network Interface", "Bytes Received/sec", InstanceName);
-        uploadCounter = new("Network Interface", "Bytes Sent/sec", InstanceName);
+        SetPerformanceCounter(GetInstanceOptions().FirstOrDefault().instanceName);
     }
 
     public static (string sign, string value, string unit) GetDownload()
     {
-
         try
         {
-            return GetInfo(DownloadSign, downloadCounter.NextValue());
+            return GetInfo(DownloadSign, downloadCounter?.NextValue());
         }
         catch
         {
@@ -36,7 +33,7 @@ public static class NetworkUsage
     {
         try
         {
-            return GetInfo(UploadSign, uploadCounter.NextValue());
+            return GetInfo(UploadSign, uploadCounter?.NextValue());
         }
         catch
         {
@@ -45,21 +42,27 @@ public static class NetworkUsage
     }
 
     private static string[] units = new string[] { "B", "KB", "MB", "GB" };
-    private static (string sign, string value, string unit) GetInfo(string sign, float bytes)
+    private static (string sign, string value, string unit) GetInfo(string sign, float? bytes)
     {
         var unitIdx = 0;
         var val = bytes;
-        while (val >= 1000)
+        while (bytes.HasValue && val >= 1000)
         {
             val /= 1024;
             unitIdx++;
         }
-        return (sign, val.ToString("0.0"), units[unitIdx]);
+        return (sign, val?.ToString("0.0") ?? "--", units[unitIdx]);
     }
 
     public static void SetPerformanceCounter(string instanceName)
     {
         InstanceName = instanceName ?? "";
+        if (string.IsNullOrEmpty(InstanceName))
+        {
+            downloadCounter = null;
+            uploadCounter = null;
+            return;
+        }
         downloadCounter = new("Network Interface", "Bytes Received/sec", InstanceName);
         uploadCounter = new("Network Interface", "Bytes Sent/sec", InstanceName);
     }

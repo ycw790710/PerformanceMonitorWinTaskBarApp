@@ -42,9 +42,16 @@ class NetworkMenuOptions : IDisposable
         }
         if (!selected)
         {
-            var first = _networkOptions.First();
-            _selectedNetworkOption = (string)first.Tag;
-            first.Checked = true;
+            var first = _networkOptions.FirstOrDefault();
+            if (first != null)
+            {
+                _selectedNetworkOption = (string)first.Tag;
+                first.Checked = true;
+            }
+            else
+            {
+                _selectedNetworkOption = "";
+            }
             NetworkUsage.SetPerformanceCounter(_selectedNetworkOption);
         }
     }

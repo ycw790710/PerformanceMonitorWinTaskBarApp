@@ -63,9 +63,9 @@ namespace PerformanceMonitorWinTaskBarApp
             var success = this.SetOnTaskBar();
             if (!success)
             {
-                EndTimers();
-                MessageBox.Show("Taskbar高度不足,結束程式", "效能監視器");
-                this.Close();
+                //EndTimers();
+                //MessageBox.Show("Taskbar高度不足,結束程式", "效能監視器");
+                //this.Close();
                 return;
             }
 

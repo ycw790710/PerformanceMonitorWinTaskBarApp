@@ -1,5 +1,4 @@
-﻿using PerformanceMonitorWinTaskBarApp.Controls;
-using PerformanceMonitorWinTaskBarApp.Extensions;
+﻿using PerformanceMonitorWinTaskBarApp.Extensions;
 using PerformanceMonitorWinTaskBarApp.Usages;
 
 namespace PerformanceMonitorWinTaskBarApp
@@ -12,7 +11,6 @@ namespace PerformanceMonitorWinTaskBarApp
         readonly System.Windows.Forms.Timer _dataTimer;
         readonly System.Windows.Forms.Timer _showTimer;
         readonly System.Windows.Forms.Timer _usageTimer;
-        readonly NetworkMenuOptions _networkMenuOptions;
         readonly UsageHandler _usageHandler;
 
         public PerformanceMonitorWinTaskBar()
@@ -23,7 +21,6 @@ namespace PerformanceMonitorWinTaskBarApp
             _showTimer = GetShowTimer();
             _usageTimer = GetUsageTimer();
             ContextMenuStrip = GetContextMenuStrip();
-            _networkMenuOptions = new(ContextMenuStrip);
             _usageHandler = new();
 
             StartTimers();
@@ -92,8 +89,6 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void UsageTimer_Tick(object? sender, EventArgs e)
         {
-            _networkMenuOptions.UpdateNetworkOptions();
-
             UpdateCpuInfo();
             UpdateMemoryInfo();
             UpdateNetworkInfo();
@@ -102,14 +97,26 @@ namespace PerformanceMonitorWinTaskBarApp
         private ContextMenuStrip GetContextMenuStrip()
         {
             ContextMenuStrip menuStrip = new();
+
             ToolStripMenuItem closeMenuItem = new ToolStripMenuItem("關閉");
             closeMenuItem.Click += CloseMenuItem_Click;
             menuStrip.Items.Add(closeMenuItem);
+
+            ToolStripMenuItem updateNetworkMenuItem = new ToolStripMenuItem("更新網路卡");
+            updateNetworkMenuItem.Click += UpdateNetworkMenuItem_Click;
+            menuStrip.Items.Add(updateNetworkMenuItem);
+
             return menuStrip;
         }
+
         private void CloseMenuItem_Click(object? sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void UpdateNetworkMenuItem_Click(object? sender, EventArgs e)
+        {
+            _usageHandler.UpdateNetwork();
         }
 
         private void UpdateCpuInfo()
@@ -130,6 +137,7 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void UpdateNetworkInfo()
         {
+            // TODO: update
             FitFontSizeInControl(() =>
             {
                 labNetUploadName.Text = _usageHandler.NetworkUploadInfo.sign;

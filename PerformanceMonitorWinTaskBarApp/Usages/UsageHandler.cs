@@ -26,4 +26,9 @@ internal class UsageHandler
         NetworkUploadInfo = NetworkUsage.GetUpload();
         NetworkDownloadInfo = NetworkUsage.GetDownload();
     }
+
+    public void UpdateNetwork()
+    {
+        NetworkUsage.UpdatePerformanceCounters();
+    }
 }

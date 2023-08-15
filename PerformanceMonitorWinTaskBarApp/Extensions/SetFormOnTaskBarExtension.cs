@@ -20,6 +20,7 @@ public static class SetFormOnTaskBarExtension
     private static extern bool GetClientRect(IntPtr hWnd, out RECT lpRect);
 
 
+#pragma warning disable CS8625 // 無法將 null 常值轉換成不可為 Null 的參考型別。
     private static int GetAppNotifyWidth()
     {
         var shellTrayWnd = FindWindowEx(IntPtr.Zero, IntPtr.Zero, "Shell_TrayWnd", null);
@@ -28,6 +29,7 @@ public static class SetFormOnTaskBarExtension
         GetClientRect(trayNotifyWnd, out rect);
         return rect.Right - rect.Left;
     }
+#pragma warning restore CS8625 // 無法將 null 常值轉換成不可為 Null 的參考型別。
 
     public static bool SetOnTaskBar(this Form form)
     {

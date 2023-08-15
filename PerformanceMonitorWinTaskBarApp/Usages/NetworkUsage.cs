@@ -6,21 +6,18 @@ public static class NetworkUsage
     public const string UploadSign = "▲";
     public const string DownloadSign = "▼";
 
-    public static string InstanceName { get; private set; } = "";
-
-    private static PerformanceCounter? downloadCounter;
-    private static PerformanceCounter? uploadCounter;
+    private static NetworkPerformanceCounters?[]? _networkPerformanceCounters = null;
 
     public static void Initialize()
     {
-        SetPerformanceCounter(GetInstanceOptions().FirstOrDefault().instanceName);
+        UpdatePerformanceCounters();
     }
 
     public static (string sign, string value, string unit) GetDownload()
     {
         try
         {
-            return GetInfo(DownloadSign, downloadCounter?.NextValue());
+            return GetInfo(DownloadSign, GetDownloadValue());
         }
         catch
         {
@@ -32,7 +29,7 @@ public static class NetworkUsage
     {
         try
         {
-            return GetInfo(UploadSign, uploadCounter?.NextValue());
+            return GetInfo(UploadSign, GetUploadValue());
         }
         catch
         {
@@ -40,12 +37,53 @@ public static class NetworkUsage
         }
     }
 
+    public static float? GetDownloadValue()
+    {
+        if (_networkPerformanceCounters == null)
+            return null;
+        float? val = 0;
+        try
+        {
+            foreach (var networkPerformanceCounter in _networkPerformanceCounters)
+            {
+                if (networkPerformanceCounter == null)
+                    continue;
+                val += networkPerformanceCounter.GetDownloadValue().GetValueOrDefault();
+            }
+        }
+        catch
+        {
+            val = null;
+        }
+        return val;
+    }
+    public static float? GetUploadValue()
+    {
+        if (_networkPerformanceCounters == null)
+            return null;
+        float? val = 0;
+        try
+        {
+            foreach (var networkPerformanceCounter in _networkPerformanceCounters)
+            {
+                if (networkPerformanceCounter == null)
+                    continue;
+                val += networkPerformanceCounter.GetUploadValue().GetValueOrDefault();
+            }
+        }
+        catch
+        {
+            val = null;
+        }
+        return val;
+    }
+
     private static string[] units = new string[] { "B", "KB", "MB", "GB" };
     private static (string sign, string value, string unit) GetInfo(string sign, float? bytes)
     {
         var unitIdx = 0;
         var val = bytes;
-        while (bytes.HasValue && val >= 1000)
+        while (val.HasValue && val >= 1000)
         {
             val /= 1024;
             unitIdx++;
@@ -53,23 +91,52 @@ public static class NetworkUsage
         return (sign, val?.ToString("0.0") ?? "--", units[unitIdx]);
     }
 
-    public static void SetPerformanceCounter(string instanceName)
+    public static void UpdatePerformanceCounters()
     {
-        InstanceName = instanceName ?? "";
-        if (string.IsNullOrEmpty(InstanceName))
+        var options = GetInstanceOptions();
+        if (_networkPerformanceCounters != null)
         {
-            downloadCounter = null;
-            uploadCounter = null;
-            return;
+            for (int i = 0; i < _networkPerformanceCounters.Length; i++)
+            {
+                var c = _networkPerformanceCounters[i];
+                _networkPerformanceCounters[i] = null;
+                c?.Dispose();
+            }
         }
-        downloadCounter = new("Network Interface", "Bytes Received/sec", InstanceName);
-        uploadCounter = new("Network Interface", "Bytes Sent/sec", InstanceName);
+        _networkPerformanceCounters =
+            options.Select(n => new NetworkPerformanceCounters(n)).ToArray();
     }
 
-    public static IReadOnlyList<(string instanceName, string description)> GetInstanceOptions()
+    private static IReadOnlyList<string> GetInstanceOptions()
     {
         PerformanceCounterCategory category = new("Network Interface");
-        return category.GetInstanceNames().Select(n => (n, n)).ToArray();
+        return category.GetInstanceNames();
     }
 
+    class NetworkPerformanceCounters : IDisposable
+    {
+        private PerformanceCounter? _downloadCounter;
+        private PerformanceCounter? _uploadCounter;
+
+        public NetworkPerformanceCounters(string instanceName)
+        {
+            if (string.IsNullOrEmpty(instanceName))
+            {
+                _downloadCounter = null;
+                _uploadCounter = null;
+                return;
+            }
+            _downloadCounter = new("Network Interface", "Bytes Received/sec", instanceName);
+            _uploadCounter = new("Network Interface", "Bytes Sent/sec", instanceName);
+        }
+
+        public float? GetDownloadValue() => _downloadCounter?.NextValue();
+        public float? GetUploadValue() => _uploadCounter?.NextValue();
+
+        public void Dispose()
+        {
+            _downloadCounter?.Dispose();
+            _uploadCounter?.Dispose();
+        }
+    }
 }

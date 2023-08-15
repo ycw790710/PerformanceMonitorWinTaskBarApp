@@ -1,5 +1,7 @@
-﻿using PerformanceMonitorWinTaskBarApp.Extensions;
+﻿using Microsoft.Win32;
+using PerformanceMonitorWinTaskBarApp.Extensions;
 using PerformanceMonitorWinTaskBarApp.Usages;
+using System.Drawing;
 
 namespace PerformanceMonitorWinTaskBarApp
 {
@@ -7,6 +9,10 @@ namespace PerformanceMonitorWinTaskBarApp
     {
         const int ShowTimerInterval = 500;
         const int DataTimerInterval = 1000;
+
+        private bool notified;
+        private bool heightIsEnough;
+        private SessionSwitchReason reason;
 
         readonly System.Windows.Forms.Timer _dataTimer;
         readonly System.Windows.Forms.Timer _showTimer;
@@ -17,6 +23,11 @@ namespace PerformanceMonitorWinTaskBarApp
         {
             InitializeComponent();
 
+            notified = false;
+            SetUserSessionSwitchChangeEvent();
+
+            heightIsEnough = false;
+
             _dataTimer = GetDataTimer();
             _showTimer = GetShowTimer();
             _usageTimer = GetUsageTimer();
@@ -24,6 +35,17 @@ namespace PerformanceMonitorWinTaskBarApp
             _usageHandler = new();
 
             StartTimers();
+        }
+
+        private void SetUserSessionSwitchChangeEvent()
+        {
+            reason = SessionSwitchReason.SessionUnlock;
+            SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
+        }
+
+        private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
+        {
+            reason = e.Reason;
         }
 
         private void StartTimers()
@@ -48,6 +70,8 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void DataTimer_Tick(object? sender, EventArgs e)
         {
+            if (!heightIsEnough)
+                return;
             _usageHandler.UpdateData();
         }
 
@@ -60,12 +84,17 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void ShowTimer_Tick(object? sender, EventArgs e)
         {
-            var success = this.SetOnTaskBar();
-            if (!success)
+            heightIsEnough = this.SetOnTaskBar();
+            if (!heightIsEnough)
             {
-                //EndTimers();
-                //MessageBox.Show("Taskbar高度不足,結束程式", "效能監視器");
-                //this.Close();
+                if (!notified)
+                {
+                    if (reason == SessionSwitchReason.SessionUnlock)
+                    {
+                        notified = true;
+                        MessageBox.Show("Taskbar高度不足, 視窗未顯示", "效能監視器");
+                    }
+                }
                 return;
             }
 
@@ -137,7 +166,6 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void UpdateNetworkInfo()
         {
-            // TODO: update
             FitFontSizeInControl(() =>
             {
                 labNetUploadName.Text = _usageHandler.NetworkUploadInfo.sign;

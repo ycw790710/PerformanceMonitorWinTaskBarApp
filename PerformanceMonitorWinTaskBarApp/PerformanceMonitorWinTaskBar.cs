@@ -89,7 +89,8 @@ namespace PerformanceMonitorWinTaskBarApp
             {
                 if (!notified)
                 {
-                    if (reason == SessionSwitchReason.SessionUnlock)
+                    SpinWait.SpinUntil(() => false, 500);
+                    if (!notified && reason == SessionSwitchReason.SessionUnlock)
                     {
                         notified = true;
                         MessageBox.Show("Taskbar高度不足, 視窗未顯示", "效能監視器");

@@ -1,5 +1,4 @@
 ﻿using System.Diagnostics;
-using System.Net.NetworkInformation;
 
 namespace PerformanceMonitorWinTaskBarApp.Usages;
 public static class NetworkUsage
@@ -70,30 +69,7 @@ public static class NetworkUsage
     public static IReadOnlyList<(string instanceName, string description)> GetInstanceOptions()
     {
         PerformanceCounterCategory category = new("Network Interface");
-
-        (string instanceName, string comparingName)[] instanceNames =
-            category.GetInstanceNames().Select(n => (n, KeepLetterOrDigits(n))).ToArray();
-
-        List<(string instanceName, string description)> availableInstanceNames = new();
-        var networkInterfaces = NetworkInterface.GetAllNetworkInterfaces()
-            .Where(n => IsAvailableNetworkInterface(n));
-        foreach (var networkInterface in networkInterfaces)
-            foreach (var instancename in instanceNames)
-                if (instancename.comparingName == KeepLetterOrDigits(networkInterface.Description))
-                    availableInstanceNames.Add((instancename.instanceName, networkInterface.Description));
-
-        return availableInstanceNames.ToList();
+        return category.GetInstanceNames().Select(n => (n, n)).ToArray();
     }
 
-    private static bool IsAvailableNetworkInterface(NetworkInterface? networkInterface)
-    {
-        return networkInterface != null &&
-                networkInterface.OperationalStatus == OperationalStatus.Up &&
-                networkInterface.NetworkInterfaceType != NetworkInterfaceType.Loopback &&
-                networkInterface.NetworkInterfaceType != NetworkInterfaceType.Tunnel;
-    }
-    private static string KeepLetterOrDigits(string str)
-    {
-        return new string(str.ToArray().Where(n => char.IsLetterOrDigit(n)).ToArray());
-    }
 }

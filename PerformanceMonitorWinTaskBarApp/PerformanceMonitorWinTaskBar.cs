@@ -89,7 +89,7 @@ namespace PerformanceMonitorWinTaskBarApp
             {
                 if (!notified)
                 {
-                    SpinWait.SpinUntil(() => false, 500);
+                    SpinWait.SpinUntil(() => false, 1000);
                     if (!notified && reason == SessionSwitchReason.SessionUnlock)
                     {
                         notified = true;

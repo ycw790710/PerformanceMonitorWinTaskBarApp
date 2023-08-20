@@ -1,23 +1,25 @@
 ﻿using Microsoft.Win32;
 using PerformanceMonitorWinTaskBarApp.Extensions;
 using PerformanceMonitorWinTaskBarApp.Usages;
-using System.Drawing;
 
 namespace PerformanceMonitorWinTaskBarApp
 {
     public partial class PerformanceMonitorWinTaskBar : Form
     {
-        const int ShowTimerInterval = 500;
-        const int DataTimerInterval = 1000;
-
         private bool notified;
         private bool heightIsEnough;
         private SessionSwitchReason reason;
-
-        readonly System.Windows.Forms.Timer _dataTimer;
-        readonly System.Windows.Forms.Timer _showTimer;
-        readonly System.Windows.Forms.Timer _usageTimer;
         readonly UsageHandler _usageHandler;
+
+        const int AdjustFormTimerInterval = 500;
+        const int UpdateDataTimerInterval = 500;
+        const int UpdateUsageTimerInterval = 1000;
+        const int UpdateNetworkTimerInterval = 30 * 1000;
+
+        readonly System.Windows.Forms.Timer _adjustFormTimer;
+        readonly System.Windows.Forms.Timer _updateDataTimer;
+        readonly System.Windows.Forms.Timer _updateDisplayTimer;
+        readonly System.Windows.Forms.Timer _updateNetworkTimer;
 
         public PerformanceMonitorWinTaskBar()
         {
@@ -25,14 +27,14 @@ namespace PerformanceMonitorWinTaskBarApp
 
             notified = false;
             SetUserSessionSwitchChangeEvent();
-
             heightIsEnough = false;
-
-            _dataTimer = GetDataTimer();
-            _showTimer = GetShowTimer();
-            _usageTimer = GetUsageTimer();
-            ContextMenuStrip = GetContextMenuStrip();
             _usageHandler = new();
+
+            _adjustFormTimer = GetAdjustFormTimer();
+            _updateDataTimer = GetUpdateDataTimer();
+            _updateDisplayTimer = GetUpdateDisplayTimer();
+            _updateNetworkTimer = GetUpdateNetworkTimer();
+            ContextMenuStrip = GetContextMenuStrip();
 
             StartTimers();
         }
@@ -48,41 +50,14 @@ namespace PerformanceMonitorWinTaskBarApp
             reason = e.Reason;
         }
 
-        private void StartTimers()
+        private System.Windows.Forms.Timer GetAdjustFormTimer()
         {
-            _dataTimer.Start();
-            _showTimer.Start();
-            _usageTimer.Start();
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = AdjustFormTimerInterval;
+            timer.Tick += AdjustFormTimer_Tick;
+            return timer;
         }
-        private void EndTimers()
-        {
-            _showTimer.Stop();
-            _dataTimer.Stop();
-            _usageTimer.Stop();
-        }
-
-        private System.Windows.Forms.Timer GetDataTimer()
-        {
-            var dataTimer = new System.Windows.Forms.Timer();
-            dataTimer.Interval = DataTimerInterval;
-            dataTimer.Tick += DataTimer_Tick;
-            return dataTimer;
-        }
-        private void DataTimer_Tick(object? sender, EventArgs e)
-        {
-            if (!heightIsEnough)
-                return;
-            _usageHandler.UpdateData();
-        }
-
-        private System.Windows.Forms.Timer GetShowTimer()
-        {
-            var showTimer = new System.Windows.Forms.Timer();
-            showTimer.Interval = ShowTimerInterval;
-            showTimer.Tick += ShowTimer_Tick;
-            return showTimer;
-        }
-        private void ShowTimer_Tick(object? sender, EventArgs e)
+        private void AdjustFormTimer_Tick(object? sender, EventArgs e)
         {
             heightIsEnough = this.SetOnTaskBar();
             if (!heightIsEnough)
@@ -109,44 +84,33 @@ namespace PerformanceMonitorWinTaskBarApp
 
         }
 
-        private System.Windows.Forms.Timer GetUsageTimer()
+        private System.Windows.Forms.Timer GetUpdateDataTimer()
         {
-            var usageTimer = new System.Windows.Forms.Timer();
-            usageTimer.Interval = DataTimerInterval;
-            usageTimer.Tick += UsageTimer_Tick;
-            return usageTimer;
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = UpdateDataTimerInterval;
+            timer.Tick += UpdateDataTimer_Tick;
+            return timer;
+        }
+        private void UpdateDataTimer_Tick(object? sender, EventArgs e)
+        {
+            if (!heightIsEnough)
+                return;
+            _usageHandler.UpdateData();
         }
 
-        private void UsageTimer_Tick(object? sender, EventArgs e)
+        private System.Windows.Forms.Timer GetUpdateDisplayTimer()
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = UpdateUsageTimerInterval;
+            timer.Tick += UpdateDisplayTimer_Tick;
+            return timer;
+        }
+
+        private void UpdateDisplayTimer_Tick(object? sender, EventArgs e)
         {
             UpdateCpuInfo();
             UpdateMemoryInfo();
             UpdateNetworkInfo();
-        }
-
-        private ContextMenuStrip GetContextMenuStrip()
-        {
-            ContextMenuStrip menuStrip = new();
-
-            ToolStripMenuItem closeMenuItem = new ToolStripMenuItem("關閉");
-            closeMenuItem.Click += CloseMenuItem_Click;
-            menuStrip.Items.Add(closeMenuItem);
-
-            ToolStripMenuItem updateNetworkMenuItem = new ToolStripMenuItem("更新網路卡");
-            updateNetworkMenuItem.Click += UpdateNetworkMenuItem_Click;
-            menuStrip.Items.Add(updateNetworkMenuItem);
-
-            return menuStrip;
-        }
-
-        private void CloseMenuItem_Click(object? sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        private void UpdateNetworkMenuItem_Click(object? sender, EventArgs e)
-        {
-            _usageHandler.UpdateNetwork();
         }
 
         private void UpdateCpuInfo()
@@ -196,5 +160,60 @@ namespace PerformanceMonitorWinTaskBarApp
                     label.ResumeLayout();
             }
         }
+
+        private System.Windows.Forms.Timer GetUpdateNetworkTimer()
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = UpdateNetworkTimerInterval;
+            timer.Tick += UpdateNetworkTimer_Tick;
+            return timer;
+        }
+
+        private void UpdateNetworkTimer_Tick(object? sender, EventArgs e)
+        {
+            _usageHandler.UpdateNetwork();
+        }
+
+        private ContextMenuStrip GetContextMenuStrip()
+        {
+            ContextMenuStrip menuStrip = new();
+
+            ToolStripMenuItem closeMenuItem = new ToolStripMenuItem("關閉");
+            closeMenuItem.Click += CloseMenuItem_Click;
+            menuStrip.Items.Add(closeMenuItem);
+
+            ToolStripMenuItem updateNetworkMenuItem = new ToolStripMenuItem("更新網路卡");
+            updateNetworkMenuItem.Click += UpdateNetworkMenuItem_Click;
+            menuStrip.Items.Add(updateNetworkMenuItem);
+
+            return menuStrip;
+        }
+
+        private void CloseMenuItem_Click(object? sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void UpdateNetworkMenuItem_Click(object? sender, EventArgs e)
+        {
+            _usageHandler.UpdateNetwork();
+        }
+
+        private void StartTimers()
+        {
+            _adjustFormTimer.Start();
+            _updateDataTimer.Start();
+            _updateDisplayTimer.Start();
+            _updateNetworkTimer.Start();
+        }
+
+        private void EndTimers()
+        {
+            _adjustFormTimer.Stop();
+            _updateDataTimer.Stop();
+            _updateDisplayTimer.Stop();
+            _updateNetworkTimer.Stop();
+        }
+
     }
 }

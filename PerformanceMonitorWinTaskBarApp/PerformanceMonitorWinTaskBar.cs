@@ -128,6 +128,9 @@ namespace PerformanceMonitorWinTaskBarApp
                 labRam.Text = _usageHandler.RamInfo.val;
                 labRamUnit.Text = _usageHandler.RamInfo.unit;
             }, labRam);
+
+            usageBarRam.Usage = _usageHandler.RamPercentVal;
+            usageBarRam.Invalidate();
         }
         private void UpdateNetworkInfo()
         {

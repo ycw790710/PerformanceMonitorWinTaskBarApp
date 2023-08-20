@@ -11,7 +11,7 @@ public static class CpuUsage
         cpuCounter = new("Processor", "% Processor Time", "_Total");
     }
 
-    public static (string val, string unit) Get()
+    public static (string val, string unit) GetUsageInfo()
     {
         try
         {

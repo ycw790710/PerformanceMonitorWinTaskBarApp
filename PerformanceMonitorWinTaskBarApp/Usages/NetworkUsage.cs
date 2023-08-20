@@ -13,7 +13,7 @@ public static class NetworkUsage
         UpdatePerformanceCounters();
     }
 
-    public static (string sign, string value, string unit) GetDownload()
+    public static (string sign, string value, string unit) GetDownloadInfo()
     {
         try
         {
@@ -25,7 +25,7 @@ public static class NetworkUsage
         }
     }
 
-    public static (string sign, string value, string unit) GetUpload()
+    public static (string sign, string value, string unit) GetUploadInfo()
     {
         try
         {

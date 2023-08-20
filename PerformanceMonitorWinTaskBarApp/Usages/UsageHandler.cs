@@ -3,6 +3,7 @@ internal class UsageHandler
 {
     public (string val, string unit) CpuInfo { get; private set; }
     public (string val, string unit) RamInfo { get; private set; }
+    public float RamPercentVal { get; private set; }
     public (string sign, string value, string unit) NetworkUploadInfo { get; private set; }
     public (string sign, string value, string unit) NetworkDownloadInfo { get; private set; }
 
@@ -21,10 +22,13 @@ internal class UsageHandler
     {
         TryInitialize();
 
-        CpuInfo = CpuUsage.Get();
-        RamInfo = MemoryUsage.Get();
-        NetworkUploadInfo = NetworkUsage.GetUpload();
-        NetworkDownloadInfo = NetworkUsage.GetDownload();
+        CpuInfo = Usages.CpuUsage.GetUsageInfo();
+
+        RamPercentVal = MemoryUsage.GetUsageInfo().percent;
+        RamInfo = MemoryUsage.GetUsedSizeInfo();
+
+        NetworkUploadInfo = NetworkUsage.GetUploadInfo();
+        NetworkDownloadInfo = NetworkUsage.GetDownloadInfo();
     }
 
     public void UpdateNetwork()

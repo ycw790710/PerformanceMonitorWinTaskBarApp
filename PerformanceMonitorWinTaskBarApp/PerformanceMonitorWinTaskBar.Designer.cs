@@ -38,9 +38,9 @@
             labNetUploadUnit = new Label();
             labNetDownloadUnit = new Label();
             labCpuName = new Label();
-            labRamName = new Label();
             labNetUploadName = new Label();
             labNetDownloadName = new Label();
+            usageBarRam = new Controls.VerticalUsageBar();
             monitorTableLayoutPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -109,9 +109,9 @@
             monitorTableLayoutPanel.Controls.Add(labCpu, 1, 0);
             monitorTableLayoutPanel.Controls.Add(labRam, 1, 1);
             monitorTableLayoutPanel.Controls.Add(labCpuName, 0, 0);
-            monitorTableLayoutPanel.Controls.Add(labRamName, 0, 1);
             monitorTableLayoutPanel.Controls.Add(labNetUploadName, 3, 0);
             monitorTableLayoutPanel.Controls.Add(labNetDownloadName, 3, 1);
+            monitorTableLayoutPanel.Controls.Add(usageBarRam, 0, 1);
             monitorTableLayoutPanel.Dock = DockStyle.Fill;
             monitorTableLayoutPanel.Location = new Point(0, 0);
             monitorTableLayoutPanel.Margin = new Padding(0);
@@ -145,7 +145,7 @@
             labRamUnit.Name = "labRamUnit";
             labRamUnit.Size = new Size(11, 24);
             labRamUnit.TabIndex = 7;
-            labRamUnit.Text = "%";
+            labRamUnit.Text = "G";
             labRamUnit.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // labNetUploadUnit
@@ -186,18 +186,6 @@
             labCpuName.Text = "CPU";
             labCpuName.TextAlign = ContentAlignment.MiddleCenter;
             // 
-            // labRamName
-            // 
-            labRamName.Dock = DockStyle.Fill;
-            labRamName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
-            labRamName.Location = new Point(0, 24);
-            labRamName.Margin = new Padding(0);
-            labRamName.Name = "labRamName";
-            labRamName.Size = new Size(5, 24);
-            labRamName.TabIndex = 9;
-            labRamName.Text = "RAM";
-            labRamName.TextAlign = ContentAlignment.MiddleCenter;
-            // 
             // labNetUploadName
             // 
             labNetUploadName.Dock = DockStyle.Fill;
@@ -222,6 +210,16 @@
             labNetDownloadName.TabIndex = 11;
             labNetDownloadName.Text = "▼";
             labNetDownloadName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // usageBarRam
+            // 
+            usageBarRam.Dock = DockStyle.Fill;
+            usageBarRam.Location = new Point(0, 24);
+            usageBarRam.Margin = new Padding(0);
+            usageBarRam.Name = "usageBarRam";
+            usageBarRam.Size = new Size(5, 24);
+            usageBarRam.TabIndex = 12;
+            usageBarRam.Usage = 0F;
             // 
             // PerformanceMonitorWinTaskBar
             // 
@@ -255,8 +253,8 @@
         private Label labRamUnit;
         private Label labNetUploadUnit;
         private Label labCpuName;
-        private Label labRamName;
         private Label labNetUploadName;
         private Label labNetDownloadName;
+        private Controls.VerticalUsageBar usageBarRam;
     }
 }

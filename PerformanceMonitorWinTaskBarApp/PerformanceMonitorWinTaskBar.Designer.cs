@@ -47,13 +47,13 @@
             labGpu = new Label();
             labGpuRam = new Label();
             labGpuName = new Label();
-            toolTipForm = new ToolTip(components);
             labDiskReadName = new Label();
             labDiskRead = new Label();
             labDiskReadUnit = new Label();
             labDiskWriteUnit = new Label();
             labDiskWrite = new Label();
             labDiskWriteName = new Label();
+            toolTipForm = new ToolTip(components);
             monitorTableLayoutPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -93,7 +93,7 @@
             labNetUpload.TabIndex = 2;
             labNetUpload.Text = "000.0";
             labNetUpload.TextAlign = ContentAlignment.MiddleRight;
-            toolTipForm.SetToolTip(labNetUpload, "網路上傳速度");
+            toolTipForm.SetToolTip(labNetUpload, "網路上傳速度(s)");
             // 
             // labNetDownload
             // 
@@ -106,7 +106,7 @@
             labNetDownload.TabIndex = 3;
             labNetDownload.Text = "000.0";
             labNetDownload.TextAlign = ContentAlignment.MiddleRight;
-            toolTipForm.SetToolTip(labNetDownload, "網路下載速度");
+            toolTipForm.SetToolTip(labNetDownload, "網路下載速度(s)");
             // 
             // monitorTableLayoutPanel
             // 
@@ -350,6 +350,7 @@
             labDiskRead.TabIndex = 19;
             labDiskRead.Text = "000.0";
             labDiskRead.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labDiskRead, "硬碟讀取速度(s)");
             // 
             // labDiskReadUnit
             // 
@@ -391,6 +392,7 @@
             labDiskWrite.TabIndex = 22;
             labDiskWrite.Text = "000.0";
             labDiskWrite.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labDiskWrite, "硬碟寫入速度(s)");
             // 
             // labDiskWriteName
             // 

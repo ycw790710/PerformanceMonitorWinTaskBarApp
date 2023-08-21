@@ -2,10 +2,15 @@
 internal class UsageHandler
 {
     public (string val, string unit) CpuInfo { get; private set; }
+
     public (string val, string unit) RamInfo { get; private set; }
     public float RamPercentVal { get; private set; }
+
     public (string sign, string value, string unit) NetworkUploadInfo { get; private set; }
     public (string sign, string value, string unit) NetworkDownloadInfo { get; private set; }
+
+    public (string val, string unit) GpuMaxUsageInfo { get; private set; }
+    public (string val, string unit) GpuDedicatedRamInfo { get; private set; }
 
     public UsageHandler()
     {
@@ -29,6 +34,9 @@ internal class UsageHandler
 
         NetworkUploadInfo = NetworkUsage.GetUploadInfo();
         NetworkDownloadInfo = NetworkUsage.GetDownloadInfo();
+
+        GpuMaxUsageInfo = GpuUsage.GetGpuMaxUsageInfo();
+        GpuDedicatedRamInfo = GpuUsage.GetGpuDedicatedMemoryUsageInfo();
     }
 
     public void UpdateNetwork()

@@ -11,6 +11,7 @@ public static class InitializeUsages
             CpuUsage.Initialize();
             MemoryUsage.Initialize();
             NetworkUsage.Initialize();
+            GpuUsage.Initialize();
         }
     }
 }

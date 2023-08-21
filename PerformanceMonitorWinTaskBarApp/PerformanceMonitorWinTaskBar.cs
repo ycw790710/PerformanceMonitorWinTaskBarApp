@@ -111,6 +111,8 @@ namespace PerformanceMonitorWinTaskBarApp
             UpdateCpuInfo();
             UpdateMemoryInfo();
             UpdateNetworkInfo();
+            UpdateGpuInfo();
+            UpdateGpuMemoryInfo();
         }
 
         private void UpdateCpuInfo()
@@ -145,21 +147,37 @@ namespace PerformanceMonitorWinTaskBarApp
                 labNetDownloadUnit.Text = _usageHandler.NetworkDownloadInfo.unit;
             }, labNetUpload, labNetUploadUnit, labNetDownload, labNetDownloadUnit);
         }
-
-        private void FitFontSizeInControl(Action action, params Label[]? labels)
+        private void UpdateGpuInfo()
         {
-            if (labels != null)
-                foreach (var label in labels)
+            FitFontSizeInControl(() =>
+            {
+                labGpu.Text = _usageHandler.GpuMaxUsageInfo.val;
+                labGpuUnit.Text = _usageHandler.GpuMaxUsageInfo.unit;
+            }, labGpu);
+        }
+        private void UpdateGpuMemoryInfo()
+        {
+            FitFontSizeInControl(() =>
+            {
+                labGpuRam.Text = _usageHandler.GpuDedicatedRamInfo.val;
+                labGpuRamUnit.Text = _usageHandler.GpuDedicatedRamInfo.unit;
+            }, labGpuRam);
+        }
+
+        private void FitFontSizeInControl(Action action, params Label[]? fitFontSizeLabels)
+        {
+            if (fitFontSizeLabels != null)
+                foreach (var label in fitFontSizeLabels)
                     label.SuspendLayout();
 
             action?.Invoke();
 
-            if (labels != null)
+            if (fitFontSizeLabels != null)
             {
-                foreach (var label in labels)
+                foreach (var label in fitFontSizeLabels)
                     label.FitFontSize();
 
-                foreach (var label in labels)
+                foreach (var label in fitFontSizeLabels)
                     label.ResumeLayout();
             }
         }

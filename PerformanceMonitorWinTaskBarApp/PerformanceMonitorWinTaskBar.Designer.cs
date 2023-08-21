@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             labCpu = new Label();
             labRam = new Label();
             labNetUpload = new Label();
@@ -41,6 +42,12 @@
             labNetUploadName = new Label();
             labNetDownloadName = new Label();
             usageBarRam = new Controls.VerticalUsageBar();
+            labGpuUnit = new Label();
+            labGpuRamUnit = new Label();
+            labGpu = new Label();
+            labGpuRam = new Label();
+            labGpuName = new Label();
+            toolTipForm = new ToolTip(components);
             monitorTableLayoutPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -55,6 +62,7 @@
             labCpu.TabIndex = 0;
             labCpu.Text = "00.0";
             labCpu.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labCpu, "CPU 使用率");
             // 
             // labRam
             // 
@@ -67,6 +75,7 @@
             labRam.TabIndex = 1;
             labRam.Text = "00.0";
             labRam.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labRam, "記憶體使用量");
             // 
             // labNetUpload
             // 
@@ -78,6 +87,7 @@
             labNetUpload.TabIndex = 2;
             labNetUpload.Text = "000.0";
             labNetUpload.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labNetUpload, "網路上傳速度");
             // 
             // labNetDownload
             // 
@@ -90,16 +100,20 @@
             labNetDownload.TabIndex = 3;
             labNetDownload.Text = "000.0";
             labNetDownload.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labNetDownload, "網路下載速度");
             // 
             // monitorTableLayoutPanel
             // 
-            monitorTableLayoutPanel.ColumnCount = 6;
+            monitorTableLayoutPanel.ColumnCount = 9;
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 32F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 11F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 10F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 39F));
-            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 20F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 25F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 32F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 11F));
             monitorTableLayoutPanel.Controls.Add(labCpuUnit, 2, 0);
             monitorTableLayoutPanel.Controls.Add(labRamUnit, 2, 1);
             monitorTableLayoutPanel.Controls.Add(labNetUploadUnit, 5, 0);
@@ -112,6 +126,11 @@
             monitorTableLayoutPanel.Controls.Add(labNetUploadName, 3, 0);
             monitorTableLayoutPanel.Controls.Add(labNetDownloadName, 3, 1);
             monitorTableLayoutPanel.Controls.Add(usageBarRam, 0, 1);
+            monitorTableLayoutPanel.Controls.Add(labGpuUnit, 8, 0);
+            monitorTableLayoutPanel.Controls.Add(labGpuRamUnit, 8, 1);
+            monitorTableLayoutPanel.Controls.Add(labGpu, 7, 0);
+            monitorTableLayoutPanel.Controls.Add(labGpuRam, 7, 1);
+            monitorTableLayoutPanel.Controls.Add(labGpuName, 6, 0);
             monitorTableLayoutPanel.Dock = DockStyle.Fill;
             monitorTableLayoutPanel.Location = new Point(0, 0);
             monitorTableLayoutPanel.Margin = new Padding(0);
@@ -119,7 +138,7 @@
             monitorTableLayoutPanel.RowCount = 2;
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            monitorTableLayoutPanel.Size = new Size(122, 48);
+            monitorTableLayoutPanel.Size = new Size(171, 48);
             monitorTableLayoutPanel.TabIndex = 4;
             // 
             // labCpuUnit
@@ -219,14 +238,84 @@
             usageBarRam.Name = "usageBarRam";
             usageBarRam.Size = new Size(5, 24);
             usageBarRam.TabIndex = 12;
+            toolTipForm.SetToolTip(usageBarRam, "記憶體使用率");
             usageBarRam.Usage = 0F;
+            // 
+            // labGpuUnit
+            // 
+            labGpuUnit.AutoSize = true;
+            labGpuUnit.Dock = DockStyle.Fill;
+            labGpuUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            labGpuUnit.ForeColor = Color.FromArgb(192, 192, 0);
+            labGpuUnit.Location = new Point(159, 0);
+            labGpuUnit.Margin = new Padding(0);
+            labGpuUnit.Name = "labGpuUnit";
+            labGpuUnit.Size = new Size(12, 24);
+            labGpuUnit.TabIndex = 13;
+            labGpuUnit.Text = "%";
+            labGpuUnit.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labGpuRamUnit
+            // 
+            labGpuRamUnit.AutoSize = true;
+            labGpuRamUnit.Dock = DockStyle.Fill;
+            labGpuRamUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            labGpuRamUnit.ForeColor = Color.FromArgb(192, 192, 0);
+            labGpuRamUnit.Location = new Point(159, 24);
+            labGpuRamUnit.Margin = new Padding(0);
+            labGpuRamUnit.Name = "labGpuRamUnit";
+            labGpuRamUnit.Size = new Size(12, 24);
+            labGpuRamUnit.TabIndex = 14;
+            labGpuRamUnit.Text = "G";
+            labGpuRamUnit.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labGpu
+            // 
+            labGpu.AutoSize = true;
+            labGpu.Dock = DockStyle.Fill;
+            labGpu.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            labGpu.Location = new Point(128, 0);
+            labGpu.Margin = new Padding(1, 0, 0, 0);
+            labGpu.Name = "labGpu";
+            labGpu.Size = new Size(31, 24);
+            labGpu.TabIndex = 15;
+            labGpu.Text = "00.0";
+            labGpu.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labGpu, "GPU 最高使用率");
+            // 
+            // labGpuRam
+            // 
+            labGpuRam.AutoSize = true;
+            labGpuRam.Dock = DockStyle.Fill;
+            labGpuRam.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            labGpuRam.Location = new Point(128, 24);
+            labGpuRam.Margin = new Padding(1, 0, 0, 0);
+            labGpuRam.Name = "labGpuRam";
+            labGpuRam.Size = new Size(31, 24);
+            labGpuRam.TabIndex = 16;
+            labGpuRam.Text = "00.0";
+            labGpuRam.TextAlign = ContentAlignment.MiddleRight;
+            toolTipForm.SetToolTip(labGpuRam, "顯示卡專屬記憶體使用量");
+            // 
+            // labGpuName
+            // 
+            labGpuName.AutoSize = true;
+            labGpuName.Dock = DockStyle.Fill;
+            labGpuName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
+            labGpuName.Location = new Point(122, 0);
+            labGpuName.Margin = new Padding(0);
+            labGpuName.Name = "labGpuName";
+            labGpuName.Size = new Size(5, 24);
+            labGpuName.TabIndex = 17;
+            labGpuName.Text = "GPU";
+            labGpuName.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // PerformanceMonitorWinTaskBar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(122, 48);
+            ClientSize = new Size(171, 48);
             ControlBox = false;
             Controls.Add(monitorTableLayoutPanel);
             ForeColor = Color.White;
@@ -238,6 +327,7 @@
             ShowIcon = false;
             ShowInTaskbar = false;
             monitorTableLayoutPanel.ResumeLayout(false);
+            monitorTableLayoutPanel.PerformLayout();
             ResumeLayout(false);
         }
 
@@ -256,5 +346,11 @@
         private Label labNetUploadName;
         private Label labNetDownloadName;
         private Controls.VerticalUsageBar usageBarRam;
+        private Label labGpuUnit;
+        private Label labGpuRamUnit;
+        private Label labGpu;
+        private Label labGpuRam;
+        private Label labGpuName;
+        private ToolTip toolTipForm;
     }
 }

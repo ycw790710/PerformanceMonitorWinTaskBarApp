@@ -2,20 +2,23 @@
 using System.Diagnostics;
 
 namespace PerformanceMonitorWinTaskBarApp.Usages;
-public class MemoryUsage
+
+public static class DiskUsage
 {
     private static bool _gotError;
     private static TimeSpan? _resetTimeByError;
 
-    private static PerformanceCounter? _memoryUsageCounter = null!;
-    private static PerformanceCounter? _memoryBytesCounter = null!;
+    private static PerformanceCounter? _diskReadBytesCounter = null!;
+    private static PerformanceCounter? _diskWriteBytesCounter = null!;
+
+    private static string[] units = new string[] { "B", "KB", "MB", "GB" };
 
     public static void Initialize()
     {
         Clean();
 
-        _memoryUsageCounter = new("Memory", "% Committed Bytes In Use");
-        _memoryBytesCounter = new("Memory", "Available Bytes");
+        _diskReadBytesCounter = new("PhysicalDisk", "Disk Read Bytes/sec", "_Total");
+        _diskWriteBytesCounter = new("PhysicalDisk", "Disk Write Bytes/sec", "_Total");
     }
 
     private static void Clean()
@@ -23,20 +26,21 @@ public class MemoryUsage
         _gotError = false;
         _resetTimeByError = null;
 
-        if (_memoryUsageCounter != null)
+        if (_diskReadBytesCounter != null)
         {
-            var tmp = _memoryUsageCounter;
-            _memoryUsageCounter = null;
+            var tmp = _diskReadBytesCounter;
+            _diskReadBytesCounter = null;
             try
             {
                 tmp?.Dispose();
             }
             catch { }
         }
-        if (_memoryBytesCounter != null)
+
+        if (_diskWriteBytesCounter != null)
         {
-            var tmp = _memoryBytesCounter;
-            _memoryBytesCounter = null;
+            var tmp = _diskWriteBytesCounter;
+            _diskWriteBytesCounter = null;
             try
             {
                 tmp?.Dispose();
@@ -45,44 +49,52 @@ public class MemoryUsage
         }
     }
 
-    public static (string val, string unit, float percent) GetUsageInfo()
+    public static (string val, string unit) GetReadInfo()
     {
         try
         {
             TryResetIfError();
 
-            if (_memoryUsageCounter == null)
+            if (_diskReadBytesCounter == null)
                 throw new Exception("ERROR");
 
-            var percent = _memoryUsageCounter.NextValue();
-            return (percent.ToString("0.0"), "%", percent);
-        }
-        catch
-        {
-            SetError();
-            return ("ERR", "", 0);
-        }
-    }
-
-    public static (string val, string unit) GetUsedSizeInfo()
-    {
-        try
-        {
-            TryResetIfError();
-
-            if (_memoryBytesCounter == null)
-                throw new Exception("ERROR");
-
-            float totalPhysicalMemoryBytes = new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory;
-            float bytes = totalPhysicalMemoryBytes - _memoryBytesCounter.NextValue();
-            float gb = bytes / (1024 * 1024 * 1024);
-            return (gb.ToString("0.0"), "G");
+            return GetInfo(_diskReadBytesCounter.NextValue());
         }
         catch
         {
             SetError();
             return ("ERR", "");
         }
+    }
+
+    public static (string val, string unit) GetWriteInfo()
+    {
+        try
+        {
+            TryResetIfError();
+
+            if (_diskWriteBytesCounter == null)
+                throw new Exception("ERROR");
+
+            return GetInfo(_diskWriteBytesCounter.NextValue());
+        }
+        catch
+        {
+            SetError();
+            return ("ERR", "");
+        }
+    }
+
+    private static (string value, string unit) GetInfo(float bytes)
+    {
+        var unitIdx = 0;
+        var val = bytes;
+        while (val >= 1000)
+        {
+            val /= 1024;
+            unitIdx++;
+        }
+        return (val.ToString("0.0"), units[unitIdx]);
     }
 
     private static void TryResetIfError()

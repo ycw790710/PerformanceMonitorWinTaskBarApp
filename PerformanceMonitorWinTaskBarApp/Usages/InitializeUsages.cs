@@ -6,12 +6,7 @@ public static class InitializeUsages
     {
         if (!initialized)
         {
-            initialized = true;
-
-            CpuUsage.Initialize();
-            MemoryUsage.Initialize();
-            NetworkUsage.Initialize();
-            GpuUsage.Initialize();
+            Reset();
         }
     }
 
@@ -23,5 +18,6 @@ public static class InitializeUsages
         MemoryUsage.Initialize();
         NetworkUsage.Initialize();
         GpuUsage.Initialize();
+        DiskUsage.Initialize();
     }
 }

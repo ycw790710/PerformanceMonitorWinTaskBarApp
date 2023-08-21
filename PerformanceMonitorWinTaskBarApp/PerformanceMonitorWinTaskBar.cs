@@ -12,7 +12,7 @@ namespace PerformanceMonitorWinTaskBarApp
         readonly UsageHandler _usageHandler;
 
         const int AdjustFormTimerInterval = 500;
-        const int UpdateDataTimerInterval = 500;
+        const int UpdateDataTimerInterval = 1000;
         const int UpdateUsageTimerInterval = 1000;
 
         readonly System.Windows.Forms.Timer _adjustFormTimer;
@@ -114,6 +114,7 @@ namespace PerformanceMonitorWinTaskBarApp
             UpdateNetworkInfo();
             UpdateGpuInfo();
             UpdateGpuMemoryInfo();
+            UpdateDiskInfo();
         }
 
         private void UpdateCpuInfo()
@@ -163,6 +164,17 @@ namespace PerformanceMonitorWinTaskBarApp
                 labGpuRam.Text = _usageHandler.GpuDedicatedRamInfo.val;
                 labGpuRamUnit.Text = _usageHandler.GpuDedicatedRamInfo.unit;
             }, labGpuRam);
+        }
+        private void UpdateDiskInfo()
+        {
+            FitFontSizeInControl(() =>
+            {
+                labDiskRead.Text = _usageHandler.DiskReadInfo.val;
+                labDiskReadUnit.Text = _usageHandler.DiskReadInfo.unit;
+
+                labDiskWrite.Text = _usageHandler.DiskWriteInfo.val;
+                labDiskWriteUnit.Text = _usageHandler.DiskWriteInfo.unit;
+            }, labDiskRead, labDiskReadUnit, labDiskWrite, labDiskWriteUnit);
         }
 
         private void FitFontSizeInControl(Action action, params Label[]? fitFontSizeLabels)

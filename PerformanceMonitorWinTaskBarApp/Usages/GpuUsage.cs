@@ -1,9 +1,13 @@
-﻿using System.Diagnostics;
+﻿using PerformanceMonitorWinTaskBarApp.Extensions;
+using System.Diagnostics;
 
 namespace PerformanceMonitorWinTaskBarApp.Usages;
 
 public static class GpuUsage
 {
+    private static bool _gotError;
+    private static TimeSpan? _resetTimeByError;
+
     private static IReadOnlyList<PerformanceCounter>? _gpuCounters;
     private static IReadOnlyList<PerformanceCounter>? _gpuDedicatedMemoryCounters;
 
@@ -30,6 +34,9 @@ public static class GpuUsage
 
     private static void Clean()
     {
+        _gotError = false;
+        _resetTimeByError = null;
+
         if (_gpuCounters != null)
         {
             var tmp = _gpuCounters;
@@ -62,6 +69,8 @@ public static class GpuUsage
     {
         try
         {
+            TryResetIfError();
+
             if (_gpuCounters == null)
                 throw new Exception("");
 
@@ -74,6 +83,7 @@ public static class GpuUsage
         }
         catch
         {
+            SetError();
             return ("ERR", "");
         }
     }
@@ -82,6 +92,8 @@ public static class GpuUsage
     {
         try
         {
+            TryResetIfError();
+
             if (_gpuDedicatedMemoryCounters == null)
                 throw new Exception("");
 
@@ -95,7 +107,26 @@ public static class GpuUsage
         }
         catch
         {
+            SetError();
             return ("ERR", "");
         }
     }
+
+    private static void TryResetIfError()
+    {
+        if (_gotError && _resetTimeByError.HasValue && _resetTimeByError.Value <= GlobalTimer.NowTimeSpan())
+        {
+            Initialize();
+        }
+    }
+
+    private static void SetError()
+    {
+        if (!_gotError)
+        {
+            _gotError = true;
+            _resetTimeByError = GlobalTimer.AddMillisecondsForNowTimeSpan(30 * 1000);
+        }
+    }
+
 }

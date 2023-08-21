@@ -48,6 +48,12 @@
             labGpuRam = new Label();
             labGpuName = new Label();
             toolTipForm = new ToolTip(components);
+            labDiskReadName = new Label();
+            labDiskRead = new Label();
+            labDiskReadUnit = new Label();
+            labDiskWriteUnit = new Label();
+            labDiskWrite = new Label();
+            labDiskWriteName = new Label();
             monitorTableLayoutPanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -104,7 +110,7 @@
             // 
             // monitorTableLayoutPanel
             // 
-            monitorTableLayoutPanel.ColumnCount = 9;
+            monitorTableLayoutPanel.ColumnCount = 12;
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 32F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 11F));
@@ -114,6 +120,9 @@
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 32F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 11F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 5F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 39F));
+            monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 25F));
             monitorTableLayoutPanel.Controls.Add(labCpuUnit, 2, 0);
             monitorTableLayoutPanel.Controls.Add(labRamUnit, 2, 1);
             monitorTableLayoutPanel.Controls.Add(labNetUploadUnit, 5, 0);
@@ -131,6 +140,12 @@
             monitorTableLayoutPanel.Controls.Add(labGpu, 7, 0);
             monitorTableLayoutPanel.Controls.Add(labGpuRam, 7, 1);
             monitorTableLayoutPanel.Controls.Add(labGpuName, 6, 0);
+            monitorTableLayoutPanel.Controls.Add(labDiskReadName, 9, 0);
+            monitorTableLayoutPanel.Controls.Add(labDiskRead, 10, 0);
+            monitorTableLayoutPanel.Controls.Add(labDiskReadUnit, 11, 0);
+            monitorTableLayoutPanel.Controls.Add(labDiskWriteUnit, 11, 1);
+            monitorTableLayoutPanel.Controls.Add(labDiskWrite, 10, 1);
+            monitorTableLayoutPanel.Controls.Add(labDiskWriteName, 9, 1);
             monitorTableLayoutPanel.Dock = DockStyle.Fill;
             monitorTableLayoutPanel.Location = new Point(0, 0);
             monitorTableLayoutPanel.Margin = new Padding(0);
@@ -138,7 +153,7 @@
             monitorTableLayoutPanel.RowCount = 2;
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            monitorTableLayoutPanel.Size = new Size(171, 48);
+            monitorTableLayoutPanel.Size = new Size(240, 48);
             monitorTableLayoutPanel.TabIndex = 4;
             // 
             // labCpuUnit
@@ -250,7 +265,7 @@
             labGpuUnit.Location = new Point(159, 0);
             labGpuUnit.Margin = new Padding(0);
             labGpuUnit.Name = "labGpuUnit";
-            labGpuUnit.Size = new Size(12, 24);
+            labGpuUnit.Size = new Size(11, 24);
             labGpuUnit.TabIndex = 13;
             labGpuUnit.Text = "%";
             labGpuUnit.TextAlign = ContentAlignment.MiddleCenter;
@@ -264,7 +279,7 @@
             labGpuRamUnit.Location = new Point(159, 24);
             labGpuRamUnit.Margin = new Padding(0);
             labGpuRamUnit.Name = "labGpuRamUnit";
-            labGpuRamUnit.Size = new Size(12, 24);
+            labGpuRamUnit.Size = new Size(11, 24);
             labGpuRamUnit.TabIndex = 14;
             labGpuRamUnit.Text = "G";
             labGpuRamUnit.TextAlign = ContentAlignment.MiddleCenter;
@@ -310,12 +325,92 @@
             labGpuName.Text = "GPU";
             labGpuName.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // labDiskReadName
+            // 
+            labDiskReadName.AutoSize = true;
+            labDiskReadName.Dock = DockStyle.Fill;
+            labDiskReadName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
+            labDiskReadName.Location = new Point(170, 0);
+            labDiskReadName.Margin = new Padding(0);
+            labDiskReadName.Name = "labDiskReadName";
+            labDiskReadName.Size = new Size(5, 24);
+            labDiskReadName.TabIndex = 18;
+            labDiskReadName.Text = "DR";
+            labDiskReadName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labDiskRead
+            // 
+            labDiskRead.AutoSize = true;
+            labDiskRead.Dock = DockStyle.Fill;
+            labDiskRead.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            labDiskRead.Location = new Point(176, 0);
+            labDiskRead.Margin = new Padding(1, 0, 0, 0);
+            labDiskRead.Name = "labDiskRead";
+            labDiskRead.Size = new Size(38, 24);
+            labDiskRead.TabIndex = 19;
+            labDiskRead.Text = "000.0";
+            labDiskRead.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labDiskReadUnit
+            // 
+            labDiskReadUnit.AutoSize = true;
+            labDiskReadUnit.Dock = DockStyle.Fill;
+            labDiskReadUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
+            labDiskReadUnit.ForeColor = Color.FromArgb(192, 192, 0);
+            labDiskReadUnit.Location = new Point(214, 0);
+            labDiskReadUnit.Margin = new Padding(0);
+            labDiskReadUnit.Name = "labDiskReadUnit";
+            labDiskReadUnit.Size = new Size(26, 24);
+            labDiskReadUnit.TabIndex = 20;
+            labDiskReadUnit.Text = "MB";
+            labDiskReadUnit.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labDiskWriteUnit
+            // 
+            labDiskWriteUnit.AutoSize = true;
+            labDiskWriteUnit.Dock = DockStyle.Fill;
+            labDiskWriteUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
+            labDiskWriteUnit.ForeColor = Color.FromArgb(192, 192, 0);
+            labDiskWriteUnit.Location = new Point(214, 24);
+            labDiskWriteUnit.Margin = new Padding(0);
+            labDiskWriteUnit.Name = "labDiskWriteUnit";
+            labDiskWriteUnit.Size = new Size(26, 24);
+            labDiskWriteUnit.TabIndex = 21;
+            labDiskWriteUnit.Text = "MB";
+            labDiskWriteUnit.TextAlign = ContentAlignment.MiddleCenter;
+            // 
+            // labDiskWrite
+            // 
+            labDiskWrite.AutoSize = true;
+            labDiskWrite.Dock = DockStyle.Fill;
+            labDiskWrite.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
+            labDiskWrite.Location = new Point(176, 24);
+            labDiskWrite.Margin = new Padding(1, 0, 0, 0);
+            labDiskWrite.Name = "labDiskWrite";
+            labDiskWrite.Size = new Size(38, 24);
+            labDiskWrite.TabIndex = 22;
+            labDiskWrite.Text = "000.0";
+            labDiskWrite.TextAlign = ContentAlignment.MiddleRight;
+            // 
+            // labDiskWriteName
+            // 
+            labDiskWriteName.AutoSize = true;
+            labDiskWriteName.Dock = DockStyle.Fill;
+            labDiskWriteName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
+            labDiskWriteName.Location = new Point(170, 24);
+            labDiskWriteName.Margin = new Padding(0);
+            labDiskWriteName.Name = "labDiskWriteName";
+            labDiskWriteName.Size = new Size(5, 24);
+            labDiskWriteName.TabIndex = 23;
+            labDiskWriteName.Text = "DW";
+            labDiskWriteName.TextAlign = ContentAlignment.MiddleCenter;
+            // 
             // PerformanceMonitorWinTaskBar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(171, 48);
+            ClientSize = new Size(240, 48);
             ControlBox = false;
             Controls.Add(monitorTableLayoutPanel);
             ForeColor = Color.White;
@@ -352,5 +447,11 @@
         private Label labGpuRam;
         private Label labGpuName;
         private ToolTip toolTipForm;
+        private Label labDiskReadName;
+        private Label labDiskRead;
+        private Label labDiskReadUnit;
+        private Label labDiskWriteUnit;
+        private Label labDiskWrite;
+        private Label labDiskWriteName;
     }
 }

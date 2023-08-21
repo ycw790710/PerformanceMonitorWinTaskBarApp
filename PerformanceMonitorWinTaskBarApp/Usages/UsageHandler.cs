@@ -12,6 +12,9 @@ internal class UsageHandler
     public (string val, string unit) GpuMaxUsageInfo { get; private set; }
     public (string val, string unit) GpuDedicatedRamInfo { get; private set; }
 
+    public (string val, string unit) DiskWriteInfo { get; private set; }
+    public (string val, string unit) DiskReadInfo { get; private set; }
+
     public UsageHandler()
     {
         NetworkUploadInfo = (NetworkUsage.UploadSign, "", "");
@@ -37,6 +40,9 @@ internal class UsageHandler
 
         GpuMaxUsageInfo = GpuUsage.GetGpuMaxUsageInfo();
         GpuDedicatedRamInfo = GpuUsage.GetGpuDedicatedMemoryUsageInfo();
+
+        DiskWriteInfo = DiskUsage.GetWriteInfo();
+        DiskReadInfo = DiskUsage.GetReadInfo();
     }
 
     public void Reset()

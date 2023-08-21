@@ -153,7 +153,7 @@
             monitorTableLayoutPanel.RowCount = 2;
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            monitorTableLayoutPanel.Size = new Size(240, 48);
+            monitorTableLayoutPanel.Size = new Size(239, 48);
             monitorTableLayoutPanel.TabIndex = 4;
             // 
             // labCpuUnit
@@ -361,7 +361,7 @@
             labDiskReadUnit.Location = new Point(214, 0);
             labDiskReadUnit.Margin = new Padding(0);
             labDiskReadUnit.Name = "labDiskReadUnit";
-            labDiskReadUnit.Size = new Size(26, 24);
+            labDiskReadUnit.Size = new Size(25, 24);
             labDiskReadUnit.TabIndex = 20;
             labDiskReadUnit.Text = "MB";
             labDiskReadUnit.TextAlign = ContentAlignment.MiddleCenter;
@@ -375,7 +375,7 @@
             labDiskWriteUnit.Location = new Point(214, 24);
             labDiskWriteUnit.Margin = new Padding(0);
             labDiskWriteUnit.Name = "labDiskWriteUnit";
-            labDiskWriteUnit.Size = new Size(26, 24);
+            labDiskWriteUnit.Size = new Size(25, 24);
             labDiskWriteUnit.TabIndex = 21;
             labDiskWriteUnit.Text = "MB";
             labDiskWriteUnit.TextAlign = ContentAlignment.MiddleCenter;
@@ -412,7 +412,7 @@
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(240, 48);
+            ClientSize = new Size(239, 48);
             ControlBox = false;
             Controls.Add(monitorTableLayoutPanel);
             ForeColor = Color.White;

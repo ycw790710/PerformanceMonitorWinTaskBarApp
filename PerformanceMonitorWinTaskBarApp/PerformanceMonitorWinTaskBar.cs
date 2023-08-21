@@ -147,7 +147,7 @@ namespace PerformanceMonitorWinTaskBarApp
                 labNetDownloadName.Text = _usageHandler.NetworkDownloadInfo.sign;
                 labNetDownload.Text = _usageHandler.NetworkDownloadInfo.value;
                 labNetDownloadUnit.Text = _usageHandler.NetworkDownloadInfo.unit;
-            }, labNetUpload, labNetUploadUnit, labNetDownload, labNetDownloadUnit);
+            });
         }
         private void UpdateGpuInfo()
         {
@@ -174,7 +174,7 @@ namespace PerformanceMonitorWinTaskBarApp
 
                 labDiskWrite.Text = _usageHandler.DiskWriteInfo.val;
                 labDiskWriteUnit.Text = _usageHandler.DiskWriteInfo.unit;
-            }, labDiskRead, labDiskReadUnit, labDiskWrite, labDiskWriteUnit);
+            });
         }
 
         private void FitFontSizeInControl(Action action, params Label[]? fitFontSizeLabels)

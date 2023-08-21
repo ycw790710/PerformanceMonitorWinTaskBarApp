@@ -12,6 +12,8 @@ public static class NetworkUsage
 
     private static NetworkPerformanceCounters[]? _networkPerformanceCounters = null;
 
+    private static string[] units = new string[] { " B", "KB", "MB", "GB" };
+
     public static void Initialize()
     {
         Clean();
@@ -111,7 +113,6 @@ public static class NetworkUsage
         return val;
     }
 
-    private static string[] units = new string[] { "B", "KB", "MB", "GB" };
     private static (string sign, string value, string unit) GetInfo(string sign, float bytes)
     {
         var unitIdx = 0;

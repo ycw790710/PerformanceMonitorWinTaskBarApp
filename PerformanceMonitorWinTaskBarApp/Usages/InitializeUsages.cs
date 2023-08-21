@@ -14,4 +14,14 @@ public static class InitializeUsages
             GpuUsage.Initialize();
         }
     }
+
+    public static void Reset()
+    {
+        initialized = true;
+
+        CpuUsage.Initialize();
+        MemoryUsage.Initialize();
+        NetworkUsage.Initialize();
+        GpuUsage.Initialize();
+    }
 }

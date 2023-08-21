@@ -43,4 +43,9 @@ internal class UsageHandler
     {
         NetworkUsage.UpdatePerformanceCounters();
     }
+
+    public void Reset()
+    {
+        InitializeUsages.Reset();
+    }
 }

@@ -14,7 +14,7 @@ namespace PerformanceMonitorWinTaskBarApp
         const int AdjustFormTimerInterval = 500;
         const int UpdateDataTimerInterval = 500;
         const int UpdateUsageTimerInterval = 1000;
-        const int UpdateNetworkTimerInterval = 30 * 1000;
+        const int UpdateNetworkTimerInterval = 60 * 1000;
 
         readonly System.Windows.Forms.Timer _adjustFormTimer;
         readonly System.Windows.Forms.Timer _updateDataTimer;
@@ -95,6 +95,7 @@ namespace PerformanceMonitorWinTaskBarApp
         {
             if (!heightIsEnough)
                 return;
+
             _usageHandler.UpdateData();
         }
 
@@ -108,6 +109,9 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void UpdateDisplayTimer_Tick(object? sender, EventArgs e)
         {
+            if (!heightIsEnough)
+                return;
+
             UpdateCpuInfo();
             UpdateMemoryInfo();
             UpdateNetworkInfo();
@@ -207,6 +211,10 @@ namespace PerformanceMonitorWinTaskBarApp
             updateNetworkMenuItem.Click += UpdateNetworkMenuItem_Click;
             menuStrip.Items.Add(updateNetworkMenuItem);
 
+            ToolStripMenuItem resetCountersMenuItem = new ToolStripMenuItem("重設所有效能監視器");
+            resetCountersMenuItem.Click += ResetCountersMenuItem_Click; ;
+            menuStrip.Items.Add(resetCountersMenuItem);
+
             return menuStrip;
         }
 
@@ -218,6 +226,11 @@ namespace PerformanceMonitorWinTaskBarApp
         private void UpdateNetworkMenuItem_Click(object? sender, EventArgs e)
         {
             _usageHandler.UpdateNetwork();
+        }
+
+        private void ResetCountersMenuItem_Click(object? sender, EventArgs e)
+        {
+            _usageHandler.Reset();
         }
 
         private void StartTimers()

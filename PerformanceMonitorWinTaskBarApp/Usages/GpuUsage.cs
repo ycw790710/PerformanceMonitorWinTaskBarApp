@@ -4,11 +4,13 @@ namespace PerformanceMonitorWinTaskBarApp.Usages;
 
 public static class GpuUsage
 {
-    private static IReadOnlyList<PerformanceCounter> _gpuCounters = null!;
-    private static IReadOnlyList<PerformanceCounter> _gpuDedicatedMemoryCounters = null!;
+    private static IReadOnlyList<PerformanceCounter>? _gpuCounters;
+    private static IReadOnlyList<PerformanceCounter>? _gpuDedicatedMemoryCounters;
 
     public static void Initialize()
     {
+        Clean();
+
         var gpuCounters = new List<PerformanceCounter>();
         foreach (var instanceName in new PerformanceCounterCategory("GPU Engine").GetInstanceNames())
         {
@@ -26,10 +28,43 @@ public static class GpuUsage
         _gpuDedicatedMemoryCounters = gpuDedicatedMemoryCounters;
     }
 
+    private static void Clean()
+    {
+        if (_gpuCounters != null)
+        {
+            var tmp = _gpuCounters;
+            _gpuCounters = null;
+            foreach (var counter in tmp)
+            {
+                try
+                {
+                    counter?.Dispose();
+                }
+                catch { }
+            }
+        }
+        if (_gpuDedicatedMemoryCounters != null)
+        {
+            var tmp = _gpuDedicatedMemoryCounters;
+            _gpuDedicatedMemoryCounters = null;
+            foreach (var counter in tmp)
+            {
+                try
+                {
+                    counter?.Dispose();
+                }
+                catch { }
+            }
+        }
+    }
+
     public static (string val, string unit) GetGpuMaxUsageInfo()
     {
         try
         {
+            if (_gpuCounters == null)
+                throw new Exception("");
+
             float maxUsage = 0;
             foreach (var gpuCounter in _gpuCounters)
             {
@@ -47,6 +82,9 @@ public static class GpuUsage
     {
         try
         {
+            if (_gpuDedicatedMemoryCounters == null)
+                throw new Exception("");
+
             float bytes = 0;
             foreach (var gpuDedicatedMemoryCounter in _gpuDedicatedMemoryCounters)
             {

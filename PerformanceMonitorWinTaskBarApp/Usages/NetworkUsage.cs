@@ -6,11 +6,43 @@ public static class NetworkUsage
     public const string UploadSign = "▲";
     public const string DownloadSign = "▼";
 
-    private static NetworkPerformanceCounters?[]? _networkPerformanceCounters = null;
+    private static NetworkPerformanceCounters[]? _networkPerformanceCounters = null;
 
     public static void Initialize()
     {
         UpdatePerformanceCounters();
+    }
+
+    public static void UpdatePerformanceCounters()
+    {
+        Clean();
+
+        var options = GetInstanceOptions();
+        _networkPerformanceCounters =
+            options.Select(n => new NetworkPerformanceCounters(n)).ToArray();
+    }
+
+    private static void Clean()
+    {
+        if (_networkPerformanceCounters != null)
+        {
+            var tmp = _networkPerformanceCounters;
+            _networkPerformanceCounters = null;
+            foreach (var counter in tmp)
+            {
+                try
+                {
+                    counter?.Dispose();
+                }
+                catch { }
+            }
+        }
+    }
+
+    private static IReadOnlyList<string> GetInstanceOptions()
+    {
+        PerformanceCounterCategory category = new("Network Interface");
+        return category.GetInstanceNames();
     }
 
     public static (string sign, string value, string unit) GetDownloadInfo()
@@ -89,28 +121,6 @@ public static class NetworkUsage
             unitIdx++;
         }
         return (sign, val?.ToString("0.0") ?? "--", units[unitIdx]);
-    }
-
-    public static void UpdatePerformanceCounters()
-    {
-        var options = GetInstanceOptions();
-        if (_networkPerformanceCounters != null)
-        {
-            for (int i = 0; i < _networkPerformanceCounters.Length; i++)
-            {
-                var c = _networkPerformanceCounters[i];
-                _networkPerformanceCounters[i] = null;
-                c?.Dispose();
-            }
-        }
-        _networkPerformanceCounters =
-            options.Select(n => new NetworkPerformanceCounters(n)).ToArray();
-    }
-
-    private static IReadOnlyList<string> GetInstanceOptions()
-    {
-        PerformanceCounterCategory category = new("Network Interface");
-        return category.GetInstanceNames();
     }
 
     class NetworkPerformanceCounters : IDisposable

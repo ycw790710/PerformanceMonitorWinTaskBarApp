@@ -14,12 +14,10 @@ namespace PerformanceMonitorWinTaskBarApp
         const int AdjustFormTimerInterval = 500;
         const int UpdateDataTimerInterval = 500;
         const int UpdateUsageTimerInterval = 1000;
-        const int UpdateNetworkTimerInterval = 60 * 1000;
 
         readonly System.Windows.Forms.Timer _adjustFormTimer;
         readonly System.Windows.Forms.Timer _updateDataTimer;
         readonly System.Windows.Forms.Timer _updateDisplayTimer;
-        readonly System.Windows.Forms.Timer _updateNetworkTimer;
 
         public PerformanceMonitorWinTaskBar()
         {
@@ -33,7 +31,6 @@ namespace PerformanceMonitorWinTaskBarApp
             _adjustFormTimer = GetAdjustFormTimer();
             _updateDataTimer = GetUpdateDataTimer();
             _updateDisplayTimer = GetUpdateDisplayTimer();
-            _updateNetworkTimer = GetUpdateNetworkTimer();
             ContextMenuStrip = GetContextMenuStrip();
 
             StartTimers();
@@ -186,19 +183,6 @@ namespace PerformanceMonitorWinTaskBarApp
             }
         }
 
-        private System.Windows.Forms.Timer GetUpdateNetworkTimer()
-        {
-            var timer = new System.Windows.Forms.Timer();
-            timer.Interval = UpdateNetworkTimerInterval;
-            timer.Tick += UpdateNetworkTimer_Tick;
-            return timer;
-        }
-
-        private void UpdateNetworkTimer_Tick(object? sender, EventArgs e)
-        {
-            _usageHandler.UpdateNetwork();
-        }
-
         private ContextMenuStrip GetContextMenuStrip()
         {
             ContextMenuStrip menuStrip = new();
@@ -206,10 +190,6 @@ namespace PerformanceMonitorWinTaskBarApp
             ToolStripMenuItem closeMenuItem = new ToolStripMenuItem("關閉");
             closeMenuItem.Click += CloseMenuItem_Click;
             menuStrip.Items.Add(closeMenuItem);
-
-            ToolStripMenuItem updateNetworkMenuItem = new ToolStripMenuItem("更新網路卡");
-            updateNetworkMenuItem.Click += UpdateNetworkMenuItem_Click;
-            menuStrip.Items.Add(updateNetworkMenuItem);
 
             ToolStripMenuItem resetCountersMenuItem = new ToolStripMenuItem("重設所有效能監視器");
             resetCountersMenuItem.Click += ResetCountersMenuItem_Click; ;
@@ -223,11 +203,6 @@ namespace PerformanceMonitorWinTaskBarApp
             this.Close();
         }
 
-        private void UpdateNetworkMenuItem_Click(object? sender, EventArgs e)
-        {
-            _usageHandler.UpdateNetwork();
-        }
-
         private void ResetCountersMenuItem_Click(object? sender, EventArgs e)
         {
             _usageHandler.Reset();
@@ -238,7 +213,6 @@ namespace PerformanceMonitorWinTaskBarApp
             _adjustFormTimer.Start();
             _updateDataTimer.Start();
             _updateDisplayTimer.Start();
-            _updateNetworkTimer.Start();
         }
 
         private void EndTimers()
@@ -246,7 +220,6 @@ namespace PerformanceMonitorWinTaskBarApp
             _adjustFormTimer.Stop();
             _updateDataTimer.Stop();
             _updateDisplayTimer.Stop();
-            _updateNetworkTimer.Stop();
         }
 
     }

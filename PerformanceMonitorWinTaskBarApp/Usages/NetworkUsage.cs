@@ -10,11 +10,6 @@ public static class NetworkUsage
 
     public static void Initialize()
     {
-        UpdatePerformanceCounters();
-    }
-
-    public static void UpdatePerformanceCounters()
-    {
         Clean();
 
         var options = GetInstanceOptions();
@@ -73,6 +68,7 @@ public static class NetworkUsage
     {
         if (_networkPerformanceCounters == null)
             return null;
+
         float? val = 0;
         try
         {
@@ -93,6 +89,7 @@ public static class NetworkUsage
     {
         if (_networkPerformanceCounters == null)
             return null;
+
         float? val = 0;
         try
         {

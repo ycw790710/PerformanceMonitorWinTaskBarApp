@@ -39,11 +39,6 @@ internal class UsageHandler
         GpuDedicatedRamInfo = GpuUsage.GetGpuDedicatedMemoryUsageInfo();
     }
 
-    public void UpdateNetwork()
-    {
-        NetworkUsage.UpdatePerformanceCounters();
-    }
-
     public void Reset()
     {
         InitializeUsages.Reset();

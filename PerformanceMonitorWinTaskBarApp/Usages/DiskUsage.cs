@@ -11,7 +11,7 @@ public static class DiskUsage
     private static PerformanceCounter? _diskReadBytesCounter = null!;
     private static PerformanceCounter? _diskWriteBytesCounter = null!;
 
-    private static string[] units = new string[] { "B", "KB", "MB", "GB" };
+    private static string[] units = new string[] { "B", "KB", "MB", "GB", "TB" };
 
     public static void Initialize()
     {

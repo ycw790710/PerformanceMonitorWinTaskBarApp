@@ -101,7 +101,7 @@ namespace PerformanceMonitorWinTaskBarApp
             else
             {
                 if (_setTransparentDateTime < DateTime.Now)
-                    this.Opacity = 0.75;
+                    this.Opacity = 0.85;
             }
         }
 

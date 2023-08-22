@@ -423,6 +423,7 @@
             Opacity = 0D;
             ShowIcon = false;
             ShowInTaskbar = false;
+            TransparencyKey = Color.Black;
             monitorTableLayoutPanel.ResumeLayout(false);
             monitorTableLayoutPanel.PerformLayout();
             ResumeLayout(false);

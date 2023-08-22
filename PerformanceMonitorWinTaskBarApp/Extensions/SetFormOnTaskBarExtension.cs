@@ -45,6 +45,7 @@ public static class SetFormOnTaskBarExtension
         form.AutoSize = false;
 
         int taskbarHeight = Screen.PrimaryScreen.Bounds.Height - Screen.PrimaryScreen.WorkingArea.Height;
+        taskbarHeight = Math.Max(0, taskbarHeight);
         if (taskbarHeight < 10)
         {
             success = false;

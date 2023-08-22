@@ -27,8 +27,7 @@ public static class NetworkUsage
 
     private static void Clean()
     {
-        _gotError = false;
-        _resetTimeByError = null;
+        ResetError();
 
         if (_networkPerformanceCounters != null)
         {
@@ -57,7 +56,9 @@ public static class NetworkUsage
         {
             TryResetIfError();
 
-            return GetInfo(DownloadSign, GetDownloadValue());
+            var res = GetInfo(DownloadSign, GetDownloadValue());
+            ResetError();
+            return res;
         }
         catch
         {
@@ -72,7 +73,9 @@ public static class NetworkUsage
         {
             TryResetIfError();
 
-            return GetInfo(UploadSign, GetUploadValue());
+            var res = GetInfo(UploadSign, GetUploadValue());
+            ResetError();
+            return res;
         }
         catch
         {
@@ -159,9 +162,16 @@ public static class NetworkUsage
     {
         if (!_gotError)
         {
+            Initialize();
+
             _gotError = true;
             _resetTimeByError = GlobalTimer.AddMillisecondsForNowTimeSpan(30 * 1000);
         }
     }
 
+    private static void ResetError()
+    {
+        _gotError = false;
+        _resetTimeByError = null;
+    }
 }

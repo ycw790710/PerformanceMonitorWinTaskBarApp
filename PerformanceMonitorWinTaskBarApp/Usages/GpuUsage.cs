@@ -15,27 +15,33 @@ public static class GpuUsage
     {
         Clean();
 
-        var gpuCounters = new List<PerformanceCounter>();
-        foreach (var instanceName in new PerformanceCounterCategory("GPU Engine").GetInstanceNames())
+        try
         {
-            var counter = new PerformanceCounter("GPU Engine", "Utilization Percentage", instanceName);
-            gpuCounters.Add(counter);
-        }
-        _gpuCounters = gpuCounters;
+            var gpuCounters = new List<PerformanceCounter>();
+            foreach (var instanceName in new PerformanceCounterCategory("GPU Engine").GetInstanceNames())
+            {
+                var counter = new PerformanceCounter("GPU Engine", "Utilization Percentage", instanceName);
+                gpuCounters.Add(counter);
+            }
+            _gpuCounters = gpuCounters;
 
-        var gpuDedicatedMemoryCounters = new List<PerformanceCounter>();
-        foreach (var instanceName in new PerformanceCounterCategory("GPU Adapter Memory").GetInstanceNames())
-        {
-            var counter = new PerformanceCounter("GPU Adapter Memory", "Dedicated Usage", instanceName);
-            gpuDedicatedMemoryCounters.Add(counter);
+            var gpuDedicatedMemoryCounters = new List<PerformanceCounter>();
+            foreach (var instanceName in new PerformanceCounterCategory("GPU Adapter Memory").GetInstanceNames())
+            {
+                var counter = new PerformanceCounter("GPU Adapter Memory", "Dedicated Usage", instanceName);
+                gpuDedicatedMemoryCounters.Add(counter);
+            }
+            _gpuDedicatedMemoryCounters = gpuDedicatedMemoryCounters;
         }
-        _gpuDedicatedMemoryCounters = gpuDedicatedMemoryCounters;
+        catch 
+        {
+            //
+        };
     }
 
     private static void Clean()
     {
-        _gotError = false;
-        _resetTimeByError = null;
+        ResetError();
 
         if (_gpuCounters != null)
         {
@@ -80,7 +86,10 @@ public static class GpuUsage
                 maxUsage = Math.Max(maxUsage, gpuCounter.NextValue());
             }
             maxUsage = (float)Math.Round(maxUsage, 1);
-            return (maxUsage.ToString("0.0"), "%");
+
+            var res = (maxUsage.ToString("0.0"), "%");
+            ResetError();
+            return res;
         }
         catch
         {
@@ -105,7 +114,10 @@ public static class GpuUsage
             }
             var gb = bytes / 1024 / 1024 / 1024;
             gb = (float)Math.Round(gb, 1);
-            return (gb.ToString("0.0"), "G");
+
+            var res = (gb.ToString("0.0"), "G");
+            ResetError();
+            return res;
         }
         catch
         {
@@ -126,9 +138,16 @@ public static class GpuUsage
     {
         if (!_gotError)
         {
+            Initialize();
+
             _gotError = true;
             _resetTimeByError = GlobalTimer.AddMillisecondsForNowTimeSpan(30 * 1000);
         }
     }
 
+    private static void ResetError()
+    {
+        _gotError = false;
+        _resetTimeByError = null;
+    }
 }

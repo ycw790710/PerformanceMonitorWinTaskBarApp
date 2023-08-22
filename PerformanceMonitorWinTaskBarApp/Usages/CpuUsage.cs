@@ -13,13 +13,19 @@ public static class CpuUsage
     {
         Clean();
 
-        _cpuCounter = new("Processor", "% Processor Time", "_Total");
+        try
+        {
+            _cpuCounter = new("Processor", "% Processor Time", "_Total");
+        }
+        catch
+        {
+            //
+        }
     }
 
     private static void Clean()
     {
-        _gotError = false;
-        _resetTimeByError = null;
+        ResetError();
 
         if (_cpuCounter != null)
         {
@@ -44,7 +50,10 @@ public static class CpuUsage
 
             var val = _cpuCounter.NextValue();
             val = (float)Math.Round(val, 1);
-            return (val.ToString("0.0"), "%");
+
+            var res = (val.ToString("0.0"), "%");
+            ResetError();
+            return res;
         }
         catch
         {
@@ -65,9 +74,16 @@ public static class CpuUsage
     {
         if (!_gotError)
         {
+            Initialize();
+
             _gotError = true;
             _resetTimeByError = GlobalTimer.AddMillisecondsForNowTimeSpan(30 * 1000);
         }
     }
 
+    private static void ResetError()
+    {
+        _gotError = false;
+        _resetTimeByError = null;
+    }
 }

@@ -14,14 +14,20 @@ public class MemoryUsage
     {
         Clean();
 
-        _memoryUsageCounter = new("Memory", "% Committed Bytes In Use");
-        _memoryBytesCounter = new("Memory", "Available Bytes");
+        try
+        {
+            _memoryUsageCounter = new("Memory", "% Committed Bytes In Use");
+            _memoryBytesCounter = new("Memory", "Available Bytes");
+        }
+        catch
+        {
+            //
+        }
     }
 
     private static void Clean()
     {
-        _gotError = false;
-        _resetTimeByError = null;
+        ResetError();
 
         if (_memoryUsageCounter != null)
         {
@@ -56,7 +62,10 @@ public class MemoryUsage
 
             var val = _memoryUsageCounter.NextValue();
             val = (float)Math.Round(val, 1);
-            return (val.ToString("0.0"), "%", val);
+
+            var res = (val.ToString("0.0"), "%", val);
+            ResetError();
+            return res;
         }
         catch
         {
@@ -78,7 +87,10 @@ public class MemoryUsage
             float bytes = totalPhysicalMemoryBytes - _memoryBytesCounter.NextValue();
             float gb = bytes / (1024 * 1024 * 1024);
             gb = (float)Math.Round(gb, 1);
-            return (gb.ToString("0.0"), "G");
+
+            var res = (gb.ToString("0.0"), "G");
+            ResetError();
+            return res;
         }
         catch
         {
@@ -99,9 +111,16 @@ public class MemoryUsage
     {
         if (!_gotError)
         {
+            Initialize();
+
             _gotError = true;
             _resetTimeByError = GlobalTimer.AddMillisecondsForNowTimeSpan(30 * 1000);
         }
     }
 
+    private static void ResetError()
+    {
+        _gotError = false;
+        _resetTimeByError = null;
+    }
 }

@@ -17,14 +17,20 @@ public static class DiskUsage
     {
         Clean();
 
-        _diskReadBytesCounter = new("PhysicalDisk", "Disk Read Bytes/sec", "_Total");
-        _diskWriteBytesCounter = new("PhysicalDisk", "Disk Write Bytes/sec", "_Total");
+        try
+        {
+            _diskReadBytesCounter = new("PhysicalDisk", "Disk Read Bytes/sec", "_Total");
+            _diskWriteBytesCounter = new("PhysicalDisk", "Disk Write Bytes/sec", "_Total");
+        }
+        catch
+        {
+            //
+        }
     }
 
     private static void Clean()
     {
-        _gotError = false;
-        _resetTimeByError = null;
+        ResetError();
 
         if (_diskReadBytesCounter != null)
         {
@@ -58,7 +64,9 @@ public static class DiskUsage
             if (_diskReadBytesCounter == null)
                 throw new Exception("ERROR");
 
-            return GetInfo(_diskReadBytesCounter.NextValue());
+            var res = GetInfo(_diskReadBytesCounter.NextValue());
+            ResetError();
+            return res;
         }
         catch
         {
@@ -76,7 +84,9 @@ public static class DiskUsage
             if (_diskWriteBytesCounter == null)
                 throw new Exception("ERROR");
 
-            return GetInfo(_diskWriteBytesCounter.NextValue());
+            var res = GetInfo(_diskWriteBytesCounter.NextValue());
+            ResetError();
+            return res;
         }
         catch
         {
@@ -95,6 +105,7 @@ public static class DiskUsage
             unitIdx++;
         }
         val = (float)Math.Round(val, 1);
+
         return (val.ToString("0.0"), units[unitIdx]);
     }
 
@@ -110,9 +121,16 @@ public static class DiskUsage
     {
         if (!_gotError)
         {
+            Initialize();
+
             _gotError = true;
             _resetTimeByError = GlobalTimer.AddMillisecondsForNowTimeSpan(30 * 1000);
         }
     }
 
+    private static void ResetError()
+    {
+        _gotError = false;
+        _resetTimeByError = null;
+    }
 }

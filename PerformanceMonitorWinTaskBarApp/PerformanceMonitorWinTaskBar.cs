@@ -9,15 +9,19 @@ namespace PerformanceMonitorWinTaskBarApp
         private bool notified;
         private bool heightIsEnough;
         private SessionSwitchReason reason;
-        readonly UsageHandler _usageHandler;
+        private readonly UsageHandler _usageHandler;
+        private bool _mouseInForm;
+        private DateTime _setTransparentDateTime;
 
         const int AdjustFormTimerInterval = 500;
         const int UpdateDataTimerInterval = 1000;
         const int UpdateUsageTimerInterval = 1000;
+        const int DetectMouseTimerInterval = 100;
 
         readonly System.Windows.Forms.Timer _adjustFormTimer;
         readonly System.Windows.Forms.Timer _updateDataTimer;
         readonly System.Windows.Forms.Timer _updateDisplayTimer;
+        readonly System.Windows.Forms.Timer _detectMouseTimer;
 
         public PerformanceMonitorWinTaskBar()
         {
@@ -27,10 +31,13 @@ namespace PerformanceMonitorWinTaskBarApp
             SetUserSessionSwitchChangeEvent();
             heightIsEnough = false;
             _usageHandler = new();
+            _mouseInForm = false;
+            _setTransparentDateTime = DateTime.MinValue;
 
             _adjustFormTimer = GetAdjustFormTimer();
             _updateDataTimer = GetUpdateDataTimer();
             _updateDisplayTimer = GetUpdateDisplayTimer();
+            _detectMouseTimer = GetDetectMouseTimer();
             ContextMenuStrip = GetContextMenuStrip();
 
             StartTimers();
@@ -77,8 +84,22 @@ namespace PerformanceMonitorWinTaskBarApp
             var top2 = this.Top;
             var left2 = this.Left;
             if (this.Opacity != 1 && top1 == top2 && left1 == left2)
-                this.Opacity = 1;
+                SetFormOpacity();
 
+        }
+
+        private void SetFormOpacity()
+        {
+            if (_mouseInForm)
+            {
+                this.Opacity = 1;
+                _setTransparentDateTime = DateTime.Now.AddSeconds(5);
+            }
+            else
+            {
+                if (_setTransparentDateTime < DateTime.Now)
+                    this.Opacity = 0.75;
+            }
         }
 
         private System.Windows.Forms.Timer GetUpdateDataTimer()
@@ -195,6 +216,26 @@ namespace PerformanceMonitorWinTaskBarApp
             }
         }
 
+        private System.Windows.Forms.Timer GetDetectMouseTimer()
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = DetectMouseTimerInterval;
+            timer.Tick += DetectMouseTimer_Tick;
+            return timer;
+        }
+
+        private void DetectMouseTimer_Tick(object? sender, EventArgs e)
+        {
+            Point mousePos = PointToClient(MousePosition);
+
+            if (ClientRectangle.Contains(mousePos))
+                _mouseInForm = true;
+            else
+                _mouseInForm = false;
+
+            SetFormOpacity();
+        }
+
         private ContextMenuStrip GetContextMenuStrip()
         {
             ContextMenuStrip menuStrip = new();
@@ -225,6 +266,7 @@ namespace PerformanceMonitorWinTaskBarApp
             _adjustFormTimer.Start();
             _updateDataTimer.Start();
             _updateDisplayTimer.Start();
+            _detectMouseTimer.Start();
         }
 
         private void EndTimers()
@@ -232,6 +274,7 @@ namespace PerformanceMonitorWinTaskBarApp
             _adjustFormTimer.Stop();
             _updateDataTimer.Stop();
             _updateDisplayTimer.Stop();
+            _detectMouseTimer.Stop();
         }
 
     }

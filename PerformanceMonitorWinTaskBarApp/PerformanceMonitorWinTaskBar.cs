@@ -87,21 +87,25 @@ namespace PerformanceMonitorWinTaskBarApp
             var top2 = this.Top;
             var left2 = this.Left;
             if (top1 == top2 && left1 == left2)
-                SetFormOpacity();
+                SetFormObviousDegree();
 
         }
 
-        private void SetFormOpacity()
+        private void SetFormObviousDegree()
         {
             if (_mouseInForm)
             {
                 this.Opacity = 1;
+                this.TransparencyKey = Color.Empty;
                 _setTransparentDateTime = DateTime.Now.AddSeconds(5);
             }
             else
             {
                 if (_setTransparentDateTime < DateTime.Now)
+                {
                     this.Opacity = 0.85;
+                    this.TransparencyKey = Color.Black;
+                }
             }
         }
 
@@ -234,7 +238,7 @@ namespace PerformanceMonitorWinTaskBarApp
             if (ClientRectangle.Contains(mousePos))
             {
                 _mouseInForm = true;
-                SetFormOpacity();
+                SetFormObviousDegree();
             }
             else
                 _mouseInForm = false;

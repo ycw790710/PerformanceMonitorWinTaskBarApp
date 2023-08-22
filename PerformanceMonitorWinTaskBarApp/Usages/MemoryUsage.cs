@@ -54,8 +54,9 @@ public class MemoryUsage
             if (_memoryUsageCounter == null)
                 throw new Exception("ERROR");
 
-            var percent = _memoryUsageCounter.NextValue();
-            return (percent.ToString("0.0"), "%", percent);
+            var val = _memoryUsageCounter.NextValue();
+            val = (float)Math.Round(val, 1);
+            return (val.ToString("0.0"), "%", val);
         }
         catch
         {
@@ -76,6 +77,7 @@ public class MemoryUsage
             float totalPhysicalMemoryBytes = new Microsoft.VisualBasic.Devices.ComputerInfo().TotalPhysicalMemory;
             float bytes = totalPhysicalMemoryBytes - _memoryBytesCounter.NextValue();
             float gb = bytes / (1024 * 1024 * 1024);
+            gb = (float)Math.Round(gb, 1);
             return (gb.ToString("0.0"), "G");
         }
         catch

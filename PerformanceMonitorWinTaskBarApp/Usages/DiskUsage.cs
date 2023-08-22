@@ -89,11 +89,12 @@ public static class DiskUsage
     {
         var unitIdx = 0;
         var val = bytes;
-        while (val >= 1000)
+        while (val >= 100)
         {
             val /= 1024;
             unitIdx++;
         }
+        val = (float)Math.Round(val, 1);
         return (val.ToString("0.0"), units[unitIdx]);
     }
 

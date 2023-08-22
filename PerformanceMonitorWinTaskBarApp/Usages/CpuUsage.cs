@@ -42,7 +42,9 @@ public static class CpuUsage
             if (_cpuCounter == null)
                 throw new Exception("ERROR");
 
-            return (_cpuCounter.NextValue().ToString("0.0"), "%");
+            var val = _cpuCounter.NextValue();
+            val = (float)Math.Round(val, 1);
+            return (val.ToString("0.0"), "%");
         }
         catch
         {

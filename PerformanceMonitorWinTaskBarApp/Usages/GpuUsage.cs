@@ -79,6 +79,7 @@ public static class GpuUsage
             {
                 maxUsage = Math.Max(maxUsage, gpuCounter.NextValue());
             }
+            maxUsage = (float)Math.Round(maxUsage, 1);
             return (maxUsage.ToString("0.0"), "%");
         }
         catch
@@ -103,6 +104,7 @@ public static class GpuUsage
                 bytes += gpuDedicatedMemoryCounter.NextValue();
             }
             var gb = bytes / 1024 / 1024 / 1024;
+            gb = (float)Math.Round(gb, 1);
             return (gb.ToString("0.0"), "G");
         }
         catch

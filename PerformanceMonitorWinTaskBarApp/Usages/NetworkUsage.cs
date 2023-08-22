@@ -12,7 +12,7 @@ public static class NetworkUsage
 
     private static NetworkPerformanceCounters[]? _networkPerformanceCounters = null;
 
-    private static string[] units = new string[] { " B", "KB", "MB", "GB" };
+    private static string[] units = new string[] { " B", "KB", "MB", "GB", "TB" };
 
     public static void Initialize()
     {
@@ -117,11 +117,12 @@ public static class NetworkUsage
     {
         var unitIdx = 0;
         var val = bytes;
-        while (val >= 1000)
+        while (val >= 100)
         {
             val /= 1024;
             unitIdx++;
         }
+        val = (float)Math.Round(val, 1);
         return (sign, val.ToString("0.0"), units[unitIdx]);
     }
 

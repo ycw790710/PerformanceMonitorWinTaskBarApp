@@ -26,6 +26,7 @@ namespace PerformanceMonitorWinTaskBarApp
         public PerformanceMonitorWinTaskBar()
         {
             InitializeComponent();
+            this.Visible = false;
 
             notified = false;
             SetUserSessionSwitchChangeEvent();
@@ -41,6 +42,8 @@ namespace PerformanceMonitorWinTaskBarApp
             ContextMenuStrip = GetContextMenuStrip();
 
             StartTimers();
+
+            this.Visible = true;
         }
 
         private void SetUserSessionSwitchChangeEvent()
@@ -83,7 +86,7 @@ namespace PerformanceMonitorWinTaskBarApp
             Show();
             var top2 = this.Top;
             var left2 = this.Left;
-            if (this.Opacity != 1 && top1 == top2 && left1 == left2)
+            if (top1 == top2 && left1 == left2)
                 SetFormOpacity();
 
         }
@@ -229,11 +232,12 @@ namespace PerformanceMonitorWinTaskBarApp
             Point mousePos = PointToClient(MousePosition);
 
             if (ClientRectangle.Contains(mousePos))
+            {
                 _mouseInForm = true;
+                SetFormOpacity();
+            }
             else
                 _mouseInForm = false;
-
-            SetFormOpacity();
         }
 
         private ContextMenuStrip GetContextMenuStrip()

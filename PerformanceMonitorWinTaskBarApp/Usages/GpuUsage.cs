@@ -33,7 +33,7 @@ public static class GpuUsage
             }
             _gpuDedicatedMemoryCounters = gpuDedicatedMemoryCounters;
         }
-        catch 
+        catch
         {
             //
         };

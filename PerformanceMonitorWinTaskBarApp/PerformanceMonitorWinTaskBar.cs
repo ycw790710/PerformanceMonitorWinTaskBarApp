@@ -6,39 +6,41 @@ namespace PerformanceMonitorWinTaskBarApp
 {
     public partial class PerformanceMonitorWinTaskBar : Form
     {
-        private bool notified;
-        private bool heightIsEnough;
-        private SessionSwitchReason reason;
-        private readonly UsageHandler _usageHandler;
-        private bool _mouseInForm;
+        private bool _notifiedHeightIsEnough;
+        private bool _heightIsEnough;
+        private SessionSwitchReason _userSessionSwitchReason;
+        private bool _shouldHighlightForm;
+        private bool _shouldUpdatePosition;
+        private (int Height, int Top, int Left) _positionInfo;
         private DateTime _setTransparentDateTime;
 
-        const int AdjustFormTimerInterval = 500;
-        const int UpdateDataTimerInterval = 1000;
-        const int UpdateUsageTimerInterval = 1000;
-        const int DetectMouseTimerInterval = 100;
+        private readonly UsageHandler _usageHandler;
 
-        readonly System.Windows.Forms.Timer _adjustFormTimer;
+        const int DisplayFormTimerInterval = 1000;
+        const int UpdateDataTimerInterval = 1000;
+        const int DetectTimerInterval = 200;
+
+        readonly System.Windows.Forms.Timer _displayTimer;
         readonly System.Windows.Forms.Timer _updateDataTimer;
-        readonly System.Windows.Forms.Timer _updateDisplayTimer;
-        readonly System.Windows.Forms.Timer _detectMouseTimer;
+        readonly System.Windows.Forms.Timer _detectTimer;
 
         public PerformanceMonitorWinTaskBar()
         {
-            InitializeComponent();
             this.Visible = false;
+            InitializeComponent();
+            this.SetOnTaskBarStyle();
 
-            notified = false;
+            _notifiedHeightIsEnough = false;
             SetUserSessionSwitchChangeEvent();
-            heightIsEnough = false;
+            _heightIsEnough = false;
             _usageHandler = new();
-            _mouseInForm = false;
+            _shouldHighlightForm = false;
+            _shouldUpdatePosition = false;
             _setTransparentDateTime = DateTime.MinValue;
 
-            _adjustFormTimer = GetAdjustFormTimer();
+            _displayTimer = GetDisplayTimer();
             _updateDataTimer = GetUpdateDataTimer();
-            _updateDisplayTimer = GetUpdateDisplayTimer();
-            _detectMouseTimer = GetDetectMouseTimer();
+            _detectTimer = GetDetectTimer();
             ContextMenuStrip = GetContextMenuStrip();
 
             StartTimers();
@@ -48,52 +50,73 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void SetUserSessionSwitchChangeEvent()
         {
-            reason = SessionSwitchReason.SessionUnlock;
+            _userSessionSwitchReason = SessionSwitchReason.SessionUnlock;
             SystemEvents.SessionSwitch += SystemEvents_SessionSwitch;
         }
 
         private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
-            reason = e.Reason;
+            _userSessionSwitchReason = e.Reason;
         }
 
-        private System.Windows.Forms.Timer GetAdjustFormTimer()
+        private System.Windows.Forms.Timer GetDisplayTimer()
         {
             var timer = new System.Windows.Forms.Timer();
-            timer.Interval = AdjustFormTimerInterval;
-            timer.Tick += AdjustFormTimer_Tick;
+            timer.Interval = DisplayFormTimerInterval;
+            timer.Tick += DisplayTimer_Tick;
             return timer;
         }
-        private void AdjustFormTimer_Tick(object? sender, EventArgs e)
+        private void DisplayTimer_Tick(object? sender, EventArgs e)
         {
-            heightIsEnough = this.SetOnTaskBar();
-            if (!heightIsEnough)
-            {
-                if (!notified)
-                {
-                    SpinWait.SpinUntil(() => false, 1000);
-                    if (!notified && reason == SessionSwitchReason.SessionUnlock)
-                    {
-                        notified = true;
-                        MessageBox.Show("Taskbar高度不足, 視窗未顯示", "效能監視器");
-                    }
-                }
+            if (!_heightIsEnough && !_shouldUpdatePosition)
                 return;
+            SuspendAllLayout(this);
+
+            if (_shouldUpdatePosition)
+            {
+                this.Top = _positionInfo.Top;
+                this.Left = _positionInfo.Left;
+                this.Height = _positionInfo.Height;
+                _shouldUpdatePosition = false;
             }
 
-            var top1 = this.Top;
-            var left1 = this.Left;
-            Show();
-            var top2 = this.Top;
-            var left2 = this.Left;
-            if (top1 == top2 && left1 == left2)
-                SetFormObviousDegree();
+            SetFormObviousDegree();
 
+            UpdateCpuInfo();
+            UpdateMemoryInfo();
+            UpdateNetworkInfo();
+            UpdateGpuInfo();
+            UpdateGpuMemoryInfo();
+            UpdateDiskInfo();
+
+            this.TopMost = true;
+
+            ResumeAllLayout(this);
+        }
+        private void SuspendAllLayout(Control control)
+        {
+            if (control == null)
+                return;
+            control.SuspendLayout();
+            if (control.Controls == null)
+                return;
+            foreach (Control child in control.Controls)
+                SuspendAllLayout(child);
+        }
+        private void ResumeAllLayout(Control control)
+        {
+            if (control == null)
+                return;
+            control.ResumeLayout(false);
+            if (control.Controls == null)
+                return;
+            foreach (Control child in control.Controls)
+                ResumeAllLayout(child);
         }
 
         private void SetFormObviousDegree()
         {
-            if (_mouseInForm)
+            if (_shouldHighlightForm)
             {
                 this.Opacity = 1;
                 this.TransparencyKey = Color.Empty;
@@ -107,42 +130,6 @@ namespace PerformanceMonitorWinTaskBarApp
                     this.TransparencyKey = Color.Black;
                 }
             }
-        }
-
-        private System.Windows.Forms.Timer GetUpdateDataTimer()
-        {
-            var timer = new System.Windows.Forms.Timer();
-            timer.Interval = UpdateDataTimerInterval;
-            timer.Tick += UpdateDataTimer_Tick;
-            return timer;
-        }
-        private void UpdateDataTimer_Tick(object? sender, EventArgs e)
-        {
-            if (!heightIsEnough)
-                return;
-
-            _usageHandler.UpdateData();
-        }
-
-        private System.Windows.Forms.Timer GetUpdateDisplayTimer()
-        {
-            var timer = new System.Windows.Forms.Timer();
-            timer.Interval = UpdateUsageTimerInterval;
-            timer.Tick += UpdateDisplayTimer_Tick;
-            return timer;
-        }
-
-        private void UpdateDisplayTimer_Tick(object? sender, EventArgs e)
-        {
-            if (!heightIsEnough)
-                return;
-
-            UpdateCpuInfo();
-            UpdateMemoryInfo();
-            UpdateNetworkInfo();
-            UpdateGpuInfo();
-            UpdateGpuMemoryInfo();
-            UpdateDiskInfo();
         }
 
         private void UpdateCpuInfo()
@@ -207,41 +194,92 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void FitFontSizeInControl(Action action, params Label[]? fitFontSizeLabels)
         {
-            if (fitFontSizeLabels != null)
-                foreach (var label in fitFontSizeLabels)
-                    label.SuspendLayout();
-
             action?.Invoke();
 
             if (fitFontSizeLabels != null)
             {
                 foreach (var label in fitFontSizeLabels)
                     label.FitFontSize();
-
-                foreach (var label in fitFontSizeLabels)
-                    label.ResumeLayout();
             }
         }
 
-        private System.Windows.Forms.Timer GetDetectMouseTimer()
+        private System.Windows.Forms.Timer GetUpdateDataTimer()
         {
             var timer = new System.Windows.Forms.Timer();
-            timer.Interval = DetectMouseTimerInterval;
-            timer.Tick += DetectMouseTimer_Tick;
+            timer.Interval = UpdateDataTimerInterval;
+            timer.Tick += UpdateDataTimer_Tick;
+            return timer;
+        }
+        private void UpdateDataTimer_Tick(object? sender, EventArgs e)
+        {
+            if (!_heightIsEnough)
+                return;
+
+            _usageHandler.UpdateData();
+        }
+
+        private System.Windows.Forms.Timer GetDetectTimer()
+        {
+            var timer = new System.Windows.Forms.Timer();
+            timer.Interval = DetectTimerInterval;
+            timer.Tick += DetectTimer_Tick;
             return timer;
         }
 
-        private void DetectMouseTimer_Tick(object? sender, EventArgs e)
+        private void DetectTimer_Tick(object? sender, EventArgs e)
+        {
+            PreparePositions();
+
+            DetectShouldHighlightForm();
+            DetectHeightIsEnough();
+            DetectShouldUpdatePositions();
+
+            TryNotifyHeightIsNotEnough();
+        }
+
+        private void PreparePositions()
+        {
+            _positionInfo = this.GetOnTaskBarPositionInfo();
+        }
+
+        private void DetectShouldHighlightForm()
         {
             Point mousePos = PointToClient(MousePosition);
 
             if (ClientRectangle.Contains(mousePos))
             {
-                _mouseInForm = true;
+                _shouldHighlightForm = true;
                 SetFormObviousDegree();
             }
             else
-                _mouseInForm = false;
+                _shouldHighlightForm = false;
+        }
+
+        private void DetectHeightIsEnough()
+        {
+            _heightIsEnough = _positionInfo.Height >= 12;
+        }
+
+        private void DetectShouldUpdatePositions()
+        {
+            _shouldUpdatePosition = _positionInfo.Top != this.Top || _positionInfo.Left != this.Left
+                || _positionInfo.Height != this.Height;
+        }
+
+        private void TryNotifyHeightIsNotEnough()
+        {
+            if (!_heightIsEnough)
+            {
+                if (!_notifiedHeightIsEnough)
+                {
+                    SpinWait.SpinUntil(() => false, 1000);
+                    if (!_notifiedHeightIsEnough && _userSessionSwitchReason == SessionSwitchReason.SessionUnlock)
+                    {
+                        _notifiedHeightIsEnough = true;
+                        MessageBox.Show("Taskbar高度不足, 視窗未顯示", "效能監視器");
+                    }
+                }
+            }
         }
 
         private ContextMenuStrip GetContextMenuStrip()
@@ -271,18 +309,16 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void StartTimers()
         {
-            _adjustFormTimer.Start();
+            _displayTimer.Start();
             _updateDataTimer.Start();
-            _updateDisplayTimer.Start();
-            _detectMouseTimer.Start();
+            _detectTimer.Start();
         }
 
         private void EndTimers()
         {
-            _adjustFormTimer.Stop();
+            _displayTimer.Stop();
             _updateDataTimer.Stop();
-            _updateDisplayTimer.Stop();
-            _detectMouseTimer.Stop();
+            _detectTimer.Stop();
         }
 
     }

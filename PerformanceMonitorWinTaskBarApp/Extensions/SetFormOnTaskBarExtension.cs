@@ -31,11 +31,8 @@ public static class SetFormOnTaskBarExtension
     }
 #pragma warning restore CS8625 // 無法將 null 常值轉換成不可為 Null 的參考型別。
 
-    public static bool SetOnTaskBar(this Form form)
+    public static void SetOnTaskBarStyle(this Form form)
     {
-        var success = true;
-        form.SuspendLayout();
-
         form.FormBorderStyle = FormBorderStyle.None;
         form.MaximizeBox = false;
         form.MinimizeBox = false;
@@ -43,20 +40,20 @@ public static class SetFormOnTaskBarExtension
         form.ShowInTaskbar = false;
         form.TopMost = true;
         form.AutoSize = false;
+    }
 
+    public static (int Height, int Top, int Left) GetOnTaskBarPositionInfo(this Form form)
+    {
         int taskbarHeight = Screen.PrimaryScreen.Bounds.Height - Screen.PrimaryScreen.WorkingArea.Height;
-        taskbarHeight = Math.Max(0, taskbarHeight);
-        if (taskbarHeight < 10)
-        {
-            success = false;
-        }
-        form.Height = taskbarHeight;
-        form.Top = Screen.PrimaryScreen.Bounds.Height - taskbarHeight;
+        var Height = Math.Max(0, taskbarHeight);
+
+        var Top = Screen.PrimaryScreen.Bounds.Height - taskbarHeight;
+        Top = Math.Max(0, Top);
 
         int right = Screen.PrimaryScreen.Bounds.Width - GetAppNotifyWidth();
-        form.Left = right - form.Width;
+        var Left = right - form.Width;
+        Left = Math.Max(0, Left);
 
-        form.ResumeLayout();
-        return success;
+        return (Height, Top, Left);
     }
 }

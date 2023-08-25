@@ -34,6 +34,9 @@ public static class FitFontSizeExtension
         }
         var newFontSize = fontSize - increment;
 
-        label.Font = new Font(label.Font.FontFamily, newFontSize);
+        if (label.Font.Size != newFontSize)
+        {
+            label.Font = new Font(label.Font.FontFamily, newFontSize);
+        }
     }
 }

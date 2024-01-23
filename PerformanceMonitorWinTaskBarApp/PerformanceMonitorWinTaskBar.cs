@@ -6,13 +6,12 @@ namespace PerformanceMonitorWinTaskBarApp
 {
     public partial class PerformanceMonitorWinTaskBar : Form
     {
-        private bool _notifiedHeightIsEnough;
-        private bool _heightIsEnough;
         private SessionSwitchReason _userSessionSwitchReason;
         private bool _shouldHighlightForm;
         private bool _shouldUpdatePosition;
         private (int Height, int Top, int Left) _positionInfo;
         private DateTime _setTransparentDateTime;
+        private bool _isHiding;
 
         private readonly UsageHandler _usageHandler;
 
@@ -30,13 +29,12 @@ namespace PerformanceMonitorWinTaskBarApp
             InitializeComponent();
             this.SetOnTaskBarStyle();
 
-            _notifiedHeightIsEnough = false;
             SetUserSessionSwitchChangeEvent();
-            _heightIsEnough = false;
             _usageHandler = new();
             _shouldHighlightForm = false;
             _shouldUpdatePosition = false;
             _setTransparentDateTime = DateTime.MinValue;
+            _isHiding = false;
 
             _displayTimer = GetDisplayTimer();
             _updateDataTimer = GetUpdateDataTimer();
@@ -57,6 +55,15 @@ namespace PerformanceMonitorWinTaskBarApp
         private void SystemEvents_SessionSwitch(object sender, SessionSwitchEventArgs e)
         {
             _userSessionSwitchReason = e.Reason;
+            // 連帶遠端會隱藏
+            if (!IsForcedToHide())
+                SetNotHiding();
+            else
+                SetIsHiding();
+        }
+        private bool IsForcedToHide()
+        {
+            return _userSessionSwitchReason != SessionSwitchReason.SessionUnlock;
         }
 
         private System.Windows.Forms.Timer GetDisplayTimer()
@@ -68,8 +75,9 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void DisplayTimer_Tick(object? sender, EventArgs e)
         {
-            if (!_heightIsEnough && !_shouldUpdatePosition)
+            if (IsForcedToHide())
                 return;
+
             SuspendAllLayout(this);
 
             if (_shouldUpdatePosition)
@@ -80,14 +88,17 @@ namespace PerformanceMonitorWinTaskBarApp
                 _shouldUpdatePosition = false;
             }
 
-            SetFormObviousDegree();
+            SetFormHighlight();
 
-            UpdateCpuInfo();
-            UpdateMemoryInfo();
-            UpdateNetworkInfo();
-            UpdateGpuInfo();
-            UpdateGpuMemoryInfo();
-            UpdateDiskInfo();
+            if (!_isHiding)
+            {
+                UpdateCpuInfo();
+                UpdateMemoryInfo();
+                UpdateNetworkInfo();
+                UpdateGpuInfo();
+                UpdateGpuMemoryInfo();
+                UpdateDiskInfo();
+            }
 
             this.TopMost = true;
 
@@ -114,12 +125,13 @@ namespace PerformanceMonitorWinTaskBarApp
                 ResumeAllLayout(child);
         }
 
-        private void SetFormObviousDegree()
+        private void SetFormHighlight()
         {
             if (_shouldHighlightForm)
             {
                 this.Opacity = 1;
                 this.TransparencyKey = Color.Empty;
+                ShowLabHideColor();
                 _setTransparentDateTime = DateTime.Now.AddSeconds(5);
             }
             else
@@ -128,8 +140,19 @@ namespace PerformanceMonitorWinTaskBarApp
                 {
                     this.Opacity = 0.85;
                     this.TransparencyKey = Color.Black;
+                    HideLabHideColor();
                 }
             }
+        }
+
+        private void HideLabHideColor()
+        {
+            btnHide.ForeColor = Color.Black;
+        }
+
+        private void ShowLabHideColor()
+        {
+            btnHide.ForeColor = Color.White;
         }
 
         private void UpdateCpuInfo()
@@ -212,7 +235,7 @@ namespace PerformanceMonitorWinTaskBarApp
         }
         private void UpdateDataTimer_Tick(object? sender, EventArgs e)
         {
-            if (!_heightIsEnough)
+            if (_isHiding || IsForcedToHide())
                 return;
 
             _usageHandler.UpdateData();
@@ -228,58 +251,61 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void DetectTimer_Tick(object? sender, EventArgs e)
         {
+            if (IsForcedToHide())
+                return;
+
             PreparePositions();
 
             DetectShouldHighlightForm();
-            DetectHeightIsEnough();
             DetectShouldUpdatePositions();
-
-            TryNotifyHeightIsNotEnough();
         }
 
         private void PreparePositions()
         {
-            _positionInfo = this.GetOnTaskBarPositionInfo();
+            var positionInfo = this.GetOnTaskBarPositionInfo();
+            if (!_isHiding)
+            {
+                positionInfo = (positionInfo.Height + this.btnHide.Height, positionInfo.Top - this.btnHide.Height, positionInfo.Left);
+            }
+            else
+            {
+                positionInfo = (this.btnHide.Height, Screen.PrimaryScreen.Bounds.Height - this.btnHide.Height, positionInfo.Left);
+            }
+            _positionInfo = positionInfo;
         }
 
         private void DetectShouldHighlightForm()
         {
             Point mousePos = PointToClient(MousePosition);
+            Point exclude_btnHide = new Point(mousePos.X, mousePos.Y - this.btnHide.Height);
 
-            if (ClientRectangle.Contains(mousePos))
-            {
+            if (_isHiding)
                 _shouldHighlightForm = true;
-                SetFormObviousDegree();
+            else if (!_shouldHighlightForm)
+            {
+                if (ClientRectangle.Contains(exclude_btnHide))
+                {
+                    _shouldHighlightForm = true;
+                }
             }
             else
-                _shouldHighlightForm = false;
-        }
+            {
+                if (!ClientRectangle.Contains(mousePos))
+                    _shouldHighlightForm = false;
+                else
+                    _shouldHighlightForm = true;
+            }
 
-        private void DetectHeightIsEnough()
-        {
-            _heightIsEnough = _positionInfo.Height >= 12;
+            if (_shouldHighlightForm)
+            {
+                SetFormHighlight();
+            }
         }
 
         private void DetectShouldUpdatePositions()
         {
             _shouldUpdatePosition = _positionInfo.Top != this.Top || _positionInfo.Left != this.Left
                 || _positionInfo.Height != this.Height;
-        }
-
-        private void TryNotifyHeightIsNotEnough()
-        {
-            if (!_heightIsEnough)
-            {
-                if (!_notifiedHeightIsEnough)
-                {
-                    SpinWait.SpinUntil(() => false, 1000);
-                    if (!_notifiedHeightIsEnough && _userSessionSwitchReason == SessionSwitchReason.SessionUnlock)
-                    {
-                        _notifiedHeightIsEnough = true;
-                        MessageBox.Show("Taskbar高度不足, 視窗未顯示", "效能監視器");
-                    }
-                }
-            }
         }
 
         private ContextMenuStrip GetContextMenuStrip()
@@ -309,17 +335,49 @@ namespace PerformanceMonitorWinTaskBarApp
 
         private void StartTimers()
         {
-            _displayTimer.Start();
-            _updateDataTimer.Start();
             _detectTimer.Start();
+            _updateDataTimer.Start();
+            _displayTimer.Start();
+        }
+
+        private void ExecuteTimerImmediately()
+        {
+            EndTimers();
+            DetectTimer_Tick(null, EventArgs.Empty);
+            UpdateDataTimer_Tick(null, EventArgs.Empty);
+            DisplayTimer_Tick(null, EventArgs.Empty);
+            StartTimers();
         }
 
         private void EndTimers()
         {
-            _displayTimer.Stop();
-            _updateDataTimer.Stop();
             _detectTimer.Stop();
+            _updateDataTimer.Stop();
+            _displayTimer.Stop();
         }
 
+        private void btnHide_Click(object sender, EventArgs e)
+        {
+            SwitchHide();
+        }
+        private void SwitchHide()
+        {
+            if (!_isHiding)
+                SetIsHiding();
+            else
+                SetNotHiding();
+        }
+        private void SetIsHiding()
+        {
+            this.btnHide.Text = "▲";
+            _isHiding = true;
+            ExecuteTimerImmediately();
+        }
+        private void SetNotHiding()
+        {
+            this.btnHide.Text = "▼";
+            _isHiding = false;
+            ExecuteTimerImmediately();
+        }
     }
 }

@@ -53,6 +53,7 @@
             labDiskWriteUnit = new Label();
             labDiskWrite = new Label();
             labDiskWriteName = new Label();
+            btnHide = new Label();
             toolTipForm = new ToolTip(components);
             monitorTableLayoutPanel.SuspendLayout();
             SuspendLayout();
@@ -61,7 +62,7 @@
             // 
             labCpu.Dock = DockStyle.Fill;
             labCpu.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labCpu.Location = new Point(6, 0);
+            labCpu.Location = new Point(6, 10);
             labCpu.Margin = new Padding(1, 0, 0, 0);
             labCpu.Name = "labCpu";
             labCpu.Size = new Size(31, 24);
@@ -74,7 +75,7 @@
             // 
             labRam.Dock = DockStyle.Fill;
             labRam.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labRam.Location = new Point(6, 24);
+            labRam.Location = new Point(6, 34);
             labRam.Margin = new Padding(1, 0, 0, 0);
             labRam.Name = "labRam";
             labRam.Size = new Size(31, 24);
@@ -86,7 +87,7 @@
             // labNetUpload
             // 
             labNetUpload.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labNetUpload.Location = new Point(59, 0);
+            labNetUpload.Location = new Point(59, 10);
             labNetUpload.Margin = new Padding(1, 0, 0, 0);
             labNetUpload.Name = "labNetUpload";
             labNetUpload.Size = new Size(31, 24);
@@ -99,7 +100,7 @@
             // 
             labNetDownload.Dock = DockStyle.Fill;
             labNetDownload.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labNetDownload.Location = new Point(59, 24);
+            labNetDownload.Location = new Point(59, 34);
             labNetDownload.Margin = new Padding(1, 0, 0, 0);
             labNetDownload.Name = "labNetDownload";
             labNetDownload.Size = new Size(31, 24);
@@ -123,37 +124,39 @@
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 7F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 32F));
             monitorTableLayoutPanel.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 25F));
-            monitorTableLayoutPanel.Controls.Add(labCpuUnit, 2, 0);
-            monitorTableLayoutPanel.Controls.Add(labRamUnit, 2, 1);
-            monitorTableLayoutPanel.Controls.Add(labNetUploadUnit, 5, 0);
-            monitorTableLayoutPanel.Controls.Add(labNetDownloadUnit, 5, 1);
-            monitorTableLayoutPanel.Controls.Add(labNetUpload, 4, 0);
-            monitorTableLayoutPanel.Controls.Add(labNetDownload, 4, 1);
-            monitorTableLayoutPanel.Controls.Add(labCpu, 1, 0);
-            monitorTableLayoutPanel.Controls.Add(labRam, 1, 1);
-            monitorTableLayoutPanel.Controls.Add(labCpuName, 0, 0);
-            monitorTableLayoutPanel.Controls.Add(labNetUploadName, 3, 0);
-            monitorTableLayoutPanel.Controls.Add(labNetDownloadName, 3, 1);
-            monitorTableLayoutPanel.Controls.Add(usageBarRam, 0, 1);
-            monitorTableLayoutPanel.Controls.Add(labGpuUnit, 8, 0);
-            monitorTableLayoutPanel.Controls.Add(labGpuRamUnit, 8, 1);
-            monitorTableLayoutPanel.Controls.Add(labGpu, 7, 0);
-            monitorTableLayoutPanel.Controls.Add(labGpuRam, 7, 1);
-            monitorTableLayoutPanel.Controls.Add(labGpuName, 6, 0);
-            monitorTableLayoutPanel.Controls.Add(labDiskReadName, 9, 0);
-            monitorTableLayoutPanel.Controls.Add(labDiskRead, 10, 0);
-            monitorTableLayoutPanel.Controls.Add(labDiskReadUnit, 11, 0);
-            monitorTableLayoutPanel.Controls.Add(labDiskWriteUnit, 11, 1);
-            monitorTableLayoutPanel.Controls.Add(labDiskWrite, 10, 1);
-            monitorTableLayoutPanel.Controls.Add(labDiskWriteName, 9, 1);
+            monitorTableLayoutPanel.Controls.Add(labCpuUnit, 2, 1);
+            monitorTableLayoutPanel.Controls.Add(labRamUnit, 2, 2);
+            monitorTableLayoutPanel.Controls.Add(labNetUploadUnit, 5, 1);
+            monitorTableLayoutPanel.Controls.Add(labNetDownloadUnit, 5, 2);
+            monitorTableLayoutPanel.Controls.Add(labNetUpload, 4, 1);
+            monitorTableLayoutPanel.Controls.Add(labNetDownload, 4, 2);
+            monitorTableLayoutPanel.Controls.Add(labCpu, 1, 1);
+            monitorTableLayoutPanel.Controls.Add(labRam, 1, 2);
+            monitorTableLayoutPanel.Controls.Add(labCpuName, 0, 1);
+            monitorTableLayoutPanel.Controls.Add(labNetUploadName, 3, 1);
+            monitorTableLayoutPanel.Controls.Add(labNetDownloadName, 3, 2);
+            monitorTableLayoutPanel.Controls.Add(usageBarRam, 0, 2);
+            monitorTableLayoutPanel.Controls.Add(labGpuUnit, 8, 1);
+            monitorTableLayoutPanel.Controls.Add(labGpuRamUnit, 8, 2);
+            monitorTableLayoutPanel.Controls.Add(labGpu, 7, 1);
+            monitorTableLayoutPanel.Controls.Add(labGpuRam, 7, 2);
+            monitorTableLayoutPanel.Controls.Add(labGpuName, 6, 1);
+            monitorTableLayoutPanel.Controls.Add(labDiskReadName, 9, 1);
+            monitorTableLayoutPanel.Controls.Add(labDiskRead, 10, 1);
+            monitorTableLayoutPanel.Controls.Add(labDiskReadUnit, 11, 1);
+            monitorTableLayoutPanel.Controls.Add(labDiskWriteUnit, 11, 2);
+            monitorTableLayoutPanel.Controls.Add(labDiskWrite, 10, 2);
+            monitorTableLayoutPanel.Controls.Add(labDiskWriteName, 9, 2);
+            monitorTableLayoutPanel.Controls.Add(btnHide, 0, 0);
             monitorTableLayoutPanel.Dock = DockStyle.Fill;
             monitorTableLayoutPanel.Location = new Point(0, 0);
             monitorTableLayoutPanel.Margin = new Padding(0);
             monitorTableLayoutPanel.Name = "monitorTableLayoutPanel";
-            monitorTableLayoutPanel.RowCount = 2;
+            monitorTableLayoutPanel.RowCount = 3;
+            monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Absolute, 10F));
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
             monitorTableLayoutPanel.RowStyles.Add(new RowStyle(SizeType.Percent, 50F));
-            monitorTableLayoutPanel.Size = new Size(226, 48);
+            monitorTableLayoutPanel.Size = new Size(226, 58);
             monitorTableLayoutPanel.TabIndex = 4;
             // 
             // labCpuUnit
@@ -161,7 +164,7 @@
             labCpuUnit.Dock = DockStyle.Fill;
             labCpuUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labCpuUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labCpuUnit.Location = new Point(37, 0);
+            labCpuUnit.Location = new Point(37, 10);
             labCpuUnit.Margin = new Padding(0);
             labCpuUnit.Name = "labCpuUnit";
             labCpuUnit.Size = new Size(11, 24);
@@ -174,7 +177,7 @@
             labRamUnit.Dock = DockStyle.Fill;
             labRamUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labRamUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labRamUnit.Location = new Point(37, 24);
+            labRamUnit.Location = new Point(37, 34);
             labRamUnit.Margin = new Padding(0);
             labRamUnit.Name = "labRamUnit";
             labRamUnit.Size = new Size(11, 24);
@@ -187,7 +190,7 @@
             labNetUploadUnit.Dock = DockStyle.Fill;
             labNetUploadUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labNetUploadUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labNetUploadUnit.Location = new Point(90, 0);
+            labNetUploadUnit.Location = new Point(90, 10);
             labNetUploadUnit.Margin = new Padding(0);
             labNetUploadUnit.Name = "labNetUploadUnit";
             labNetUploadUnit.Size = new Size(25, 24);
@@ -200,7 +203,7 @@
             labNetDownloadUnit.Dock = DockStyle.Fill;
             labNetDownloadUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labNetDownloadUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labNetDownloadUnit.Location = new Point(90, 24);
+            labNetDownloadUnit.Location = new Point(90, 34);
             labNetDownloadUnit.Margin = new Padding(0);
             labNetDownloadUnit.Name = "labNetDownloadUnit";
             labNetDownloadUnit.Size = new Size(25, 24);
@@ -212,7 +215,7 @@
             // 
             labCpuName.Dock = DockStyle.Fill;
             labCpuName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
-            labCpuName.Location = new Point(0, 0);
+            labCpuName.Location = new Point(0, 10);
             labCpuName.Margin = new Padding(0);
             labCpuName.Name = "labCpuName";
             labCpuName.Size = new Size(5, 24);
@@ -225,7 +228,7 @@
             labNetUploadName.Dock = DockStyle.Fill;
             labNetUploadName.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
             labNetUploadName.ForeColor = Color.White;
-            labNetUploadName.Location = new Point(50, 0);
+            labNetUploadName.Location = new Point(50, 10);
             labNetUploadName.Margin = new Padding(2, 0, 0, 0);
             labNetUploadName.Name = "labNetUploadName";
             labNetUploadName.Size = new Size(8, 24);
@@ -237,7 +240,7 @@
             // 
             labNetDownloadName.Dock = DockStyle.Fill;
             labNetDownloadName.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
-            labNetDownloadName.Location = new Point(50, 24);
+            labNetDownloadName.Location = new Point(50, 34);
             labNetDownloadName.Margin = new Padding(2, 0, 0, 0);
             labNetDownloadName.Name = "labNetDownloadName";
             labNetDownloadName.Size = new Size(8, 24);
@@ -248,7 +251,7 @@
             // usageBarRam
             // 
             usageBarRam.Dock = DockStyle.Fill;
-            usageBarRam.Location = new Point(0, 24);
+            usageBarRam.Location = new Point(0, 34);
             usageBarRam.Margin = new Padding(0);
             usageBarRam.Name = "usageBarRam";
             usageBarRam.Size = new Size(5, 24);
@@ -262,7 +265,7 @@
             labGpuUnit.Dock = DockStyle.Fill;
             labGpuUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labGpuUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labGpuUnit.Location = new Point(154, 0);
+            labGpuUnit.Location = new Point(154, 10);
             labGpuUnit.Margin = new Padding(0);
             labGpuUnit.Name = "labGpuUnit";
             labGpuUnit.Size = new Size(11, 24);
@@ -276,7 +279,7 @@
             labGpuRamUnit.Dock = DockStyle.Fill;
             labGpuRamUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labGpuRamUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labGpuRamUnit.Location = new Point(154, 24);
+            labGpuRamUnit.Location = new Point(154, 34);
             labGpuRamUnit.Margin = new Padding(0);
             labGpuRamUnit.Name = "labGpuRamUnit";
             labGpuRamUnit.Size = new Size(11, 24);
@@ -289,7 +292,7 @@
             labGpu.AutoSize = true;
             labGpu.Dock = DockStyle.Fill;
             labGpu.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labGpu.Location = new Point(123, 0);
+            labGpu.Location = new Point(123, 10);
             labGpu.Margin = new Padding(1, 0, 0, 0);
             labGpu.Name = "labGpu";
             labGpu.Size = new Size(31, 24);
@@ -303,7 +306,7 @@
             labGpuRam.AutoSize = true;
             labGpuRam.Dock = DockStyle.Fill;
             labGpuRam.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labGpuRam.Location = new Point(123, 24);
+            labGpuRam.Location = new Point(123, 34);
             labGpuRam.Margin = new Padding(1, 0, 0, 0);
             labGpuRam.Name = "labGpuRam";
             labGpuRam.Size = new Size(31, 24);
@@ -317,7 +320,7 @@
             labGpuName.AutoSize = true;
             labGpuName.Dock = DockStyle.Fill;
             labGpuName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
-            labGpuName.Location = new Point(117, 0);
+            labGpuName.Location = new Point(117, 10);
             labGpuName.Margin = new Padding(2, 0, 0, 0);
             labGpuName.Name = "labGpuName";
             labGpuName.Size = new Size(5, 24);
@@ -330,7 +333,7 @@
             labDiskReadName.AutoSize = true;
             labDiskReadName.Dock = DockStyle.Fill;
             labDiskReadName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
-            labDiskReadName.Location = new Point(167, 0);
+            labDiskReadName.Location = new Point(167, 10);
             labDiskReadName.Margin = new Padding(2, 0, 0, 0);
             labDiskReadName.Name = "labDiskReadName";
             labDiskReadName.Size = new Size(5, 24);
@@ -343,7 +346,7 @@
             labDiskRead.AutoSize = true;
             labDiskRead.Dock = DockStyle.Fill;
             labDiskRead.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labDiskRead.Location = new Point(173, 0);
+            labDiskRead.Location = new Point(173, 10);
             labDiskRead.Margin = new Padding(1, 0, 0, 0);
             labDiskRead.Name = "labDiskRead";
             labDiskRead.Size = new Size(31, 24);
@@ -358,7 +361,7 @@
             labDiskReadUnit.Dock = DockStyle.Fill;
             labDiskReadUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labDiskReadUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labDiskReadUnit.Location = new Point(204, 0);
+            labDiskReadUnit.Location = new Point(204, 10);
             labDiskReadUnit.Margin = new Padding(0);
             labDiskReadUnit.Name = "labDiskReadUnit";
             labDiskReadUnit.Size = new Size(25, 24);
@@ -372,7 +375,7 @@
             labDiskWriteUnit.Dock = DockStyle.Fill;
             labDiskWriteUnit.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Bold, GraphicsUnit.Point);
             labDiskWriteUnit.ForeColor = Color.FromArgb(230, 230, 0);
-            labDiskWriteUnit.Location = new Point(204, 24);
+            labDiskWriteUnit.Location = new Point(204, 34);
             labDiskWriteUnit.Margin = new Padding(0);
             labDiskWriteUnit.Name = "labDiskWriteUnit";
             labDiskWriteUnit.Size = new Size(25, 24);
@@ -385,7 +388,7 @@
             labDiskWrite.AutoSize = true;
             labDiskWrite.Dock = DockStyle.Fill;
             labDiskWrite.Font = new Font("Microsoft JhengHei UI", 9F, FontStyle.Bold, GraphicsUnit.Point);
-            labDiskWrite.Location = new Point(173, 24);
+            labDiskWrite.Location = new Point(173, 34);
             labDiskWrite.Margin = new Padding(1, 0, 0, 0);
             labDiskWrite.Name = "labDiskWrite";
             labDiskWrite.Size = new Size(31, 24);
@@ -399,7 +402,7 @@
             labDiskWriteName.AutoSize = true;
             labDiskWriteName.Dock = DockStyle.Fill;
             labDiskWriteName.Font = new Font("Microsoft JhengHei UI", 4F, FontStyle.Bold, GraphicsUnit.Point);
-            labDiskWriteName.Location = new Point(167, 24);
+            labDiskWriteName.Location = new Point(167, 34);
             labDiskWriteName.Margin = new Padding(2, 0, 0, 0);
             labDiskWriteName.Name = "labDiskWriteName";
             labDiskWriteName.Size = new Size(5, 24);
@@ -407,12 +410,27 @@
             labDiskWriteName.Text = "DW";
             labDiskWriteName.TextAlign = ContentAlignment.MiddleCenter;
             // 
+            // btnHide
+            // 
+            btnHide.AutoSize = true;
+            monitorTableLayoutPanel.SetColumnSpan(btnHide, 12);
+            btnHide.Dock = DockStyle.Fill;
+            btnHide.Font = new Font("Microsoft JhengHei UI", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            btnHide.Location = new Point(0, 0);
+            btnHide.Margin = new Padding(0);
+            btnHide.Name = "btnHide";
+            btnHide.Size = new Size(229, 10);
+            btnHide.TabIndex = 24;
+            btnHide.Text = "▼";
+            btnHide.TextAlign = ContentAlignment.MiddleCenter;
+            btnHide.Click += btnHide_Click;
+            // 
             // PerformanceMonitorWinTaskBar
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(226, 48);
+            ClientSize = new Size(226, 58);
             ControlBox = false;
             Controls.Add(monitorTableLayoutPanel);
             ForeColor = Color.White;
@@ -456,5 +474,6 @@
         private Label labDiskWriteUnit;
         private Label labDiskWrite;
         private Label labDiskWriteName;
+        private Label btnHide;
     }
 }

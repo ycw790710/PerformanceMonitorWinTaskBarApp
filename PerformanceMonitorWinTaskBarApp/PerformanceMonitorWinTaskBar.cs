@@ -278,8 +278,9 @@ namespace PerformanceMonitorWinTaskBarApp
         {
             Point mousePos = PointToClient(MousePosition);
             Point exclude_btnHide = new Point(mousePos.X, mousePos.Y - this.btnHide.Height);
+            var exclude_btnHide_height0 = _positionInfo.Height == this.btnHide.Height;
 
-            if (_isHiding)
+            if (_isHiding || exclude_btnHide_height0)
                 _shouldHighlightForm = true;
             else if (!_shouldHighlightForm)
             {
